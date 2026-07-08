@@ -1,0 +1,18 @@
+/*
+===========================================================
+App.css
+
+Estilos temporales.
+
+Más adelante este archivo prácticamente
+no se utilizará porque el proyecto
+trabajará con Bootstrap 5
+y estilos organizados dentro de styles/.
+===========================================================
+*/
+
+body{
+
+    margin:0;
+
+}

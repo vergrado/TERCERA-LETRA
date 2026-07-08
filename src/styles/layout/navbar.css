@@ -1,0 +1,63 @@
+/* ==========================================================
+   NAVBAR
+   Plataforma: TERCERA LETRA
+   ========================================================== */
+.navbar-custom{
+    height:75px;
+    background:#FFFFFF;
+    border-bottom:1px solid #E5E7EB;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 30px;
+}
+/* ========================================= */
+.navbar-search{
+    display:flex;
+    align-items:center;
+    background:#F3F4F6;
+    padding:10px 15px;
+    border-radius:10px;
+    width:350px;
+}
+.search-icon{
+    color:#6B7280;
+}
+.navbar-search input{
+    border:none;
+    background:transparent;
+    outline:none;
+    margin-left:10px;
+    width:100%;
+}
+/* ========================================= */
+.navbar-right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+/* ========================================= */
+.navbar-icon{
+    background:none;
+    border:none;
+    font-size:1.2rem;
+    color:#374151;
+    cursor:pointer;
+}
+/* ========================================= */
+.navbar-user{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+.user-avatar{
+    font-size:2.3rem;
+    color:#2563EB;
+}
+.navbar-user h6{
+    margin:0;
+    font-weight:600;
+}
+.navbar-user small{
+    color:#6B7280;
+}

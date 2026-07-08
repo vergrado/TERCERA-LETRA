@@ -1,0 +1,80 @@
+/* ==========================================================
+   SIDEBAR
+   Plataforma: TERCERA LETRA
+   ========================================================== */
+
+/*----------------------------------------------------------
+    Contenedor principal
+----------------------------------------------------------*/
+.sidebar{
+    width:280px;
+    min-height:100vh;
+    background:#1F2937;
+    color:#FFFFFF;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+    box-shadow:2px 0 10px rgba(0,0,0,.10);
+}
+/*----------------------------------------------------------
+    Encabezado
+----------------------------------------------------------*/
+.sidebar-header{
+    padding:30px 20px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+}
+.sidebar-header h3{
+    margin:0;
+    font-size:1.35rem;
+    font-weight:700;
+    text-align:center;
+    letter-spacing:.5px;
+}
+/*----------------------------------------------------------
+    Menú
+----------------------------------------------------------*/
+.sidebar-menu{
+    display:flex;
+    flex-direction:column;
+    padding:15px;
+    gap:8px;
+}
+/*----------------------------------------------------------
+    Item
+----------------------------------------------------------*/
+.sidebar-item{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    padding:14px 18px;
+    border-radius:10px;
+    color:#E5E7EB;
+    text-decoration:none;
+    transition:.25s;
+    font-weight:500;
+}
+/* Hover */
+.sidebar-item:hover{
+    background:#374151;
+    color:#FFFFFF;
+}
+/* Ruta activa */
+.sidebar-item-active{
+    background:#2563EB;
+    color:#FFFFFF;
+}
+/*----------------------------------------------------------
+    Icono
+----------------------------------------------------------*/
+.sidebar-item-icon{
+    font-size:1.1rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+/*----------------------------------------------------------
+    Texto
+----------------------------------------------------------*/
+.sidebar-item-title{
+    flex:1;
+}

@@ -1,0 +1,31 @@
+/*
+===========================================================
+index.css
+
+Estilos globales de toda la aplicación.
+
+Aquí posteriormente se cargarán:
+
+Bootstrap
+
+Variables CSS
+
+Tipografías
+
+Configuraciones generales
+===========================================================
+*/
+
+html,
+body,
+#root{
+
+    width:100%;
+
+    min-height:100vh;
+
+    margin:0;
+
+    padding:0;
+
+}
