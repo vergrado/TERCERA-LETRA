@@ -26,7 +26,7 @@ import { CaseProvider } from "../../contexts/CaseContext";
 import CasesHeader from "../../components/casos/CasesHeader";
 import CaseFilters from "../../components/casos/CaseFilters";
 import CasesTable from "../../components/casos/CasesTable";
-import "../../styles/cases/cases.css";
+import "../../styles/layout/cases/cases.css";
 // ============================================================
 // COMPONENTE
 // ============================================================
