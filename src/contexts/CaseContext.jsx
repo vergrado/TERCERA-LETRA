@@ -31,20 +31,14 @@ export const useCaseContext = () => {
 // ============================================================
 export const CaseProvider = ({ children }) => {
     //----------------------------------------------------------
-    // Toda la lógica proviene del hook.
+    // Estado completo del módulo de Casos.
     //----------------------------------------------------------
-    const cases = useCases();
+    const caseState = useCases();
     //----------------------------------------------------------
-    // Información compartida.
-    //----------------------------------------------------------
-    const value = {
-        ...cases
-    };
-    //----------------------------------------------------------
-    // Compartimos el contexto.
+    // Compartimos el estado.
     //----------------------------------------------------------
     return (
-        <CaseContext.Provider value={value}>
+        <CaseContext.Provider value={caseState}>
             {children}
         </CaseContext.Provider>
     );
