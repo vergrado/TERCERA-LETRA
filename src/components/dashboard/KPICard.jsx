@@ -1,13 +1,8 @@
 // ============================================================
-// KPICards.jsx
+// KPICard.jsx
 // ------------------------------------------------------------
-// Contenedor de indicadores principales del Dashboard.
-//
-// Responsabilidades:
-//
-// • Mostrar los KPIs principales.
-// • Obtener la información desde DashboardContext.
-// • Mostrar placeholders durante la carga.
+// Tarjeta reutilizable para mostrar un indicador (KPI)
+// dentro del Dashboard.
 //
 // Plataforma:
 // TERCERA LETRA
@@ -18,106 +13,106 @@
 // IMPORTACIONES
 // ============================================================
 
-import {
-    FaFolderOpen,
-    FaUsers,
-    FaFileAlt,
-    FaBell
-} from "react-icons/fa";
-import Placeholder from "react-bootstrap/Placeholder";
-import KPICard from "./KPICard";
-import { useDashboardContext } from "../../contexts/DashboardContext";
-import "../../styles/dashboard/kpi-cards.css";
+import { Card } from "react-bootstrap";
+
+import { useNavigate } from "react-router-dom";
+
+import "../../styles/dashboard/kpi-card.css";
+
+
 // ============================================================
 // COMPONENTE
 // ============================================================
-const KPICards = () => {
-    //----------------------------------------------------------
-    // Información compartida del Dashboard.
-    //----------------------------------------------------------
-    const {
-        kpis,
-        loading
-    } = useDashboardContext();
-    //----------------------------------------------------------
-    // Configuración de tarjetas.
-    //----------------------------------------------------------
-    const cards = [
-        {
-            title: "Casos",
-            value: kpis.cases,
-            icon: <FaFolderOpen />,
-            color: "primary",
-            route: "/casos"
-        },
-        {
-            title: "Personas",
-            value: kpis.people,
-            icon: <FaUsers />,
-            color: "success",
-            route: "/personas"
-        },
-        {
-            title: "Documentos",
-            value: kpis.documents,
-            icon: <FaFileAlt />,
-            color: "warning",
-            route: "/documentos"
-        },
-        {
-            title: "Alertas",
-            value: kpis.alerts,
-            icon: <FaBell />,
-            color: "danger",
-            route: "/alertas"
 
-        }
-    ];
+const KPICard = ({
+
+    title,
+
+    value,
+
+    icon,
+
+    color,
+
+    route
+
+}) => {
+
     //----------------------------------------------------------
-    // Mientras se cargan los datos.
+    // Navegación
     //----------------------------------------------------------
-    if (loading) {
-        return (
-            <section className="kpi-grid">
-                {
-                    Array.from({ length: 4 }).map((_, index) => (
-                        <div
-                            key={index}
-                            className="card shadow-sm p-4"
-                        >
-                            <Placeholder animation="glow">
-                                <Placeholder xs={8} />
-                            </Placeholder>
-                            <Placeholder animation="glow">
-                                <Placeholder xs={4} />
-                            </Placeholder>
-                        </div>
-                    ))
-                }
-            </section>
-        );
-    }
+
+    const navigate = useNavigate();
+
+
     //----------------------------------------------------------
-    // Vista normal.
+    // Ir al módulo
     //----------------------------------------------------------
+
+    const handleClick = () => {
+
+        navigate(route);
+
+    };
+
+
+    //----------------------------------------------------------
+    // Vista
+    //----------------------------------------------------------
+
     return (
-        <section className="kpi-grid">
-            {
-                cards.map((card) => (
-                    <KPICard
-                        key={card.title}
-                        title={card.title}
-                        value={card.value}
-                        icon={card.icon}
-                        color={card.color}
-                        route={card.route}
-                    />
-                ))
-            }
-        </section>
+
+        <Card
+
+            className="kpi-card shadow-sm"
+
+            onClick={handleClick}
+
+        >
+
+            <Card.Body>
+
+                <div className="kpi-card-content">
+
+                    <div>
+
+                        <h6 className="kpi-title">
+
+                            {title}
+
+                        </h6>
+
+                        <h2 className="kpi-value">
+
+                            {value}
+
+                        </h2>
+
+                    </div>
+
+                    <div
+
+                        className={`kpi-icon bg-${color}`}
+
+                    >
+
+                        {icon}
+
+                    </div>
+
+                </div>
+
+            </Card.Body>
+
+        </Card>
+
     );
+
 };
+
+
 // ============================================================
 // EXPORTACIÓN
 // ============================================================
-export default KPICards;
+
+export default KPICard;

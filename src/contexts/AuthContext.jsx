@@ -1,38 +1,185 @@
 // ============================================================
-// DashboardContext.jsx
+// AuthContext.jsx
 // ------------------------------------------------------------
-// Contexto encargado de compartir toda la información del
-// Dashboard entre los componentes.
+// Contexto global de autenticación.
 //
 // Plataforma:
 // TERCERA LETRA
+//
+// Responsabilidades:
+//
+// • Mantener la sesión del usuario.
+// • Exponer login.
+// • Exponer register.
+// • Exponer logout.
+// • Compartir currentUser.
+// • Administrar loading.
 // ============================================================
+
+
+// ============================================================
+// IMPORTACIONES
+// ============================================================
+
 import {
     createContext,
-    useContext
+    useContext,
+    useEffect,
+    useState
 } from "react";
-import useDashboard from "../hooks/useDashboard";
+
+import {
+    onAuthStateChanged
+} from "firebase/auth";
+
+import { auth } from "../firebase";
+
+import {
+    login,
+    register,
+    logout
+} from "../services/authService";
+
+
 // ============================================================
-// Contexto
+// CONTEXTO
 // ============================================================
-const DashboardContext = createContext();
+
+const AuthContext = createContext();
+
+
 // ============================================================
-// Hook personalizado
+// HOOK PERSONALIZADO
 // ============================================================
-export const useDashboardContext = () => {
-    return useContext(DashboardContext);
+
+export const useAuth = () => {
+    return useContext(AuthContext);
 };
+
+
 // ============================================================
-// Provider
+// PROVIDER
 // ============================================================
-export const DashboardProvider = ({ children }) => {
+
+export const AuthProvider = ({ children }) => {
+
     //----------------------------------------------------------
-    // Toda la información proviene del hook.
+    // Usuario autenticado.
     //----------------------------------------------------------
-    const dashboard = useDashboard();
+
+    const [currentUser, setCurrentUser] = useState(null);
+
+    //----------------------------------------------------------
+    // Estado de carga.
+    //----------------------------------------------------------
+
+    const [loading, setLoading] = useState(true);
+
+    //----------------------------------------------------------
+    // Iniciar sesión.
+    //----------------------------------------------------------
+
+    const signIn = async (email, password) => {
+        return await login(email, password);
+    };
+
+    //----------------------------------------------------------
+    // Registrar usuario.
+    //----------------------------------------------------------
+
+    const signUp = async (
+        nombre,
+        email,
+        password
+    ) => {
+
+        return await register(
+            nombre,
+            email,
+            password
+        );
+
+    };
+
+    //----------------------------------------------------------
+    // Cerrar sesión.
+    //----------------------------------------------------------
+
+    const signOut = async () => {
+        return await logout();
+    };
+
+    //----------------------------------------------------------
+    // Escuchar cambios de autenticación.
+    //----------------------------------------------------------
+
+    useEffect(() => {
+
+        const unsubscribe = onAuthStateChanged(
+
+            auth,
+
+            (user) => {
+
+                setCurrentUser(user);
+
+                setLoading(false);
+
+            }
+
+        );
+
+        return unsubscribe;
+
+    }, []);
+
+    //----------------------------------------------------------
+    // Información compartida.
+    //----------------------------------------------------------
+
+    const value = {
+
+        currentUser,
+
+        login: signIn,
+
+        register: signUp,
+
+        logout: signOut,
+
+        loading
+
+    };
+
+    //----------------------------------------------------------
+    // Esperamos que Firebase determine la sesión.
+    //----------------------------------------------------------
+
+    if (loading) {
+
+        return null;
+
+    }
+
+    //----------------------------------------------------------
+    // Provider.
+    //----------------------------------------------------------
+
     return (
-        <DashboardContext.Provider value={dashboard}>
+
+        <AuthContext.Provider value={value}>
+
             {children}
-        </DashboardContext.Provider>
+
+        </AuthContext.Provider>
+
     );
+
 };
+
+
+// ============================================================
+// EXPORTACIÓN
+// ============================================================
+
+export default AuthContext;

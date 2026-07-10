@@ -4,6 +4,9 @@
 // Hook encargado de administrar toda la información del
 // Dashboard.
 //
+// Plataforma:
+// TERCERA LETRA
+//
 // Responsabilidades:
 //
 // • Obtener KPIs.
@@ -11,109 +14,198 @@
 // • Obtener actividad reciente.
 // • Administrar loading.
 // • Administrar errores.
+// • Permitir recargar el Dashboard.
 //
-// Plataforma:
-// TERCERA LETRA
 // ============================================================
 
 
 // ============================================================
 // IMPORTACIONES
 // ============================================================
+
 import {
+
     useEffect,
+
     useState,
+
     useCallback
+
 } from "react";
+
 import {
+
     getTotalCases,
+
     getTotalPeople,
+
     getTotalDocuments,
+
     getTotalAlerts,
+
     getRecentCases,
+
     getRecentActivity
+
 } from "../services/dashboardService";
+
+
 // ============================================================
 // HOOK
 // ============================================================
+
 const useDashboard = () => {
+
     //----------------------------------------------------------
     // Estados.
     //----------------------------------------------------------
+
     const [loading, setLoading] = useState(true);
+
     const [error, setError] = useState(null);
+
     const [kpis, setKpis] = useState({
+
         cases: 0,
+
         people: 0,
+
         documents: 0,
+
         alerts: 0
+
     });
+
     const [recentCases, setRecentCases] = useState([]);
+
     const [recentActivity, setRecentActivity] = useState([]);
+
+
     //----------------------------------------------------------
     // Cargar Dashboard.
     //----------------------------------------------------------
+
     const loadDashboard = useCallback(async () => {
+
         try {
+
             setLoading(true);
+
             setError(null);
+
             //--------------------------------------------------
-            // Ejecutamos todas las consultas en paralelo.
+            // Todas las consultas se ejecutan en paralelo.
             //--------------------------------------------------
+
             const [
+
                 totalCases,
+
                 totalPeople,
+
                 totalDocuments,
+
                 totalAlerts,
+
                 cases,
+
                 activity
+
             ] = await Promise.all([
+
                 getTotalCases(),
+
                 getTotalPeople(),
+
                 getTotalDocuments(),
+
                 getTotalAlerts(),
+
                 getRecentCases(),
+
                 getRecentActivity()
+
             ]);
+
             //--------------------------------------------------
-            // Guardamos KPIs.
+            // KPIs.
             //--------------------------------------------------
+
             setKpis({
+
                 cases: totalCases,
+
                 people: totalPeople,
+
                 documents: totalDocuments,
+
                 alerts: totalAlerts
+
             });
+
             //--------------------------------------------------
-            // Guardamos listas.
+            // Información adicional.
             //--------------------------------------------------
+
             setRecentCases(cases);
+
             setRecentActivity(activity);
+
         }
+
         catch (err) {
+
             console.error(err);
+
             setError(err);
+
         }
+
         finally {
+
             setLoading(false);
+
         }
+
     }, []);
+
+
     //----------------------------------------------------------
     // Primera carga.
     //----------------------------------------------------------
+
     useEffect(() => {
+
         loadDashboard();
+
     }, [loadDashboard]);
+
+
     //----------------------------------------------------------
-    // Información disponible.
+    // Información compartida.
     //----------------------------------------------------------
+
     return {
+
         loading,
+
         error,
+
         kpis,
+
         recentCases,
+
         recentActivity,
-        reloadDashboard: loadDashboard
+
+        loadDashboard
+
     };
+
 };
+
+
+// ============================================================
+// EXPORTACIÓN
+// ============================================================
+
 export default useDashboard;
