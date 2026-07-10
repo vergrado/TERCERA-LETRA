@@ -98,3 +98,4 @@ const KPICards = () => {
     );
 };
 export default KPICards;
+

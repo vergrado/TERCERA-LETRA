@@ -10,5 +10,4 @@ const Documentos = () => {
         </div>
     );
 };
-
 export default Documentos;

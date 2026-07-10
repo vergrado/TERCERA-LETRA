@@ -13,5 +13,4 @@ const Alertas = () => {
         </div>
     );
 };
-
 export default Alertas;

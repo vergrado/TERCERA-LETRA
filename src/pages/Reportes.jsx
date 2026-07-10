@@ -1,7 +1,6 @@
 // ============================================================
 // Reportes.jsx
 // ============================================================
-
 const Reportes = () => {
     return (
         <div className="container py-4">
@@ -10,5 +9,4 @@ const Reportes = () => {
         </div>
     );
 };
-
 export default Reportes;
