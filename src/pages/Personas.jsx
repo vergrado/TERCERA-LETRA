@@ -1,7 +1,6 @@
 // ============================================================
 // Personas.jsx
 // ============================================================
-
 const Personas = () => {
     return (
         <div className="container py-4">
@@ -10,5 +9,4 @@ const Personas = () => {
         </div>
     );
 };
-
 export default Personas;

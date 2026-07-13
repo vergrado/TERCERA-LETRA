@@ -24,9 +24,7 @@ const DashboardContext = createContext();
 // HOOK PERSONALIZADO
 // ============================================================
 export const useDashboardContext = () => {
-
     return useContext(DashboardContext);
-
 };
 // ============================================================
 // PROVIDER
