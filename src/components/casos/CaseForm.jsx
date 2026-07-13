@@ -134,6 +134,7 @@ const CaseForm = () => {
                             }
                             placeholder="Descripción del caso"
                         />
+                        
                     </Form.Group>
                     <Form.Group className="mb-3">
                         <Form.Label>
