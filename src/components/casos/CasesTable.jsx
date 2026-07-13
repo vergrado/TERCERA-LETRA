@@ -107,7 +107,7 @@ const CasesTable = () => {
                                 {item.prioridad}
                             </td>
                             <td>
-                                {item.responsableUid}
+                                {item.responsableNombre ?? item.responsableEmail}
                             </td>
                             <td>
                                 {

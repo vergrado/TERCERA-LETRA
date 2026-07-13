@@ -5,20 +5,8 @@
 //
 // Plataforma:
 // TERCERA LETRA
-//
-// Responsabilidades:
-//
-// • Mantener la sesión del usuario.
-// • Exponer login.
-// • Exponer register.
-// • Exponer logout.
-// • Compartir currentUser.
-// • Administrar loading.
 // ============================================================
 
-// ============================================================
-// IMPORTACIONES
-// ============================================================
 import {
     createContext,
     useContext,
@@ -30,100 +18,213 @@ import {
     onAuthStateChanged
 } from "firebase/auth";
 
-import { auth } from "../firebase";
+import {
+    doc,
+    getDoc
+} from "firebase/firestore";
+
+import {
+    auth,
+    db
+} from "../firebase";
 
 import {
     login,
     register,
     logout
 } from "../services/authService";
+
 // ============================================================
 // CONTEXTO
 // ============================================================
+
 const AuthContext = createContext();
+
 // ============================================================
-// HOOK PERSONALIZADO
+// HOOK
 // ============================================================
+
 export const useAuth = () => {
     return useContext(AuthContext);
 };
+
 // ============================================================
 // PROVIDER
 // ============================================================
+
 export const AuthProvider = ({ children }) => {
+
     //----------------------------------------------------------
-    // Usuario autenticado.
+    // Usuario autenticado
     //----------------------------------------------------------
+
     const [currentUser, setCurrentUser] = useState(null);
+
     //----------------------------------------------------------
-    // Estado de carga.
+    // Perfil del usuario almacenado en Firestore
     //----------------------------------------------------------
+
+    const [profile, setProfile] = useState(null);
+
+    //----------------------------------------------------------
+    // Estado de carga
+    //----------------------------------------------------------
+
     const [loading, setLoading] = useState(true);
+
     //----------------------------------------------------------
-    // Iniciar sesión.
+    // Login
     //----------------------------------------------------------
+
     const signIn = async (email, password) => {
         return await login(email, password);
     };
+
     //----------------------------------------------------------
-    // Registrar usuario.
+    // Registro
     //----------------------------------------------------------
+
     const signUp = async (
         nombre,
         email,
         password
     ) => {
+
         return await register(
             nombre,
             email,
             password
         );
+
     };
+
     //----------------------------------------------------------
-    // Cerrar sesión.
+    // Logout
     //----------------------------------------------------------
+
     const signOut = async () => {
+
+        setProfile(null);
+
         return await logout();
+
     };
+
     //----------------------------------------------------------
-    // Escuchar cambios de autenticación.
+    // Escuchar cambios de autenticación
     //----------------------------------------------------------
+
     useEffect(() => {
+
         const unsubscribe = onAuthStateChanged(
+
             auth,
-            (user) => {
+
+            async (user) => {
+
                 setCurrentUser(user);
+
+                //--------------------------------------------------
+                // Si existe sesión cargamos el perfil
+                //--------------------------------------------------
+
+                if (user) {
+
+                    try {
+
+                        const profileRef = doc(
+                            db,
+                            "usuarios",
+                            user.uid
+                        );
+
+                        const profileSnap =
+                            await getDoc(profileRef);
+
+                        if (profileSnap.exists()) {
+
+                            setProfile(profileSnap.data());
+
+                        }
+                        else {
+
+                            setProfile(null);
+
+                        }
+
+                    }
+                    catch (error) {
+
+                        console.error(
+                            "Error cargando perfil:",
+                            error
+                        );
+
+                        setProfile(null);
+
+                    }
+
+                }
+                else {
+
+                    setProfile(null);
+
+                }
+
                 setLoading(false);
+
             }
+
         );
+
         return unsubscribe;
+
     }, []);
+
     //----------------------------------------------------------
-    // Información compartida.
+    // Valores compartidos
     //----------------------------------------------------------
+
     const value = {
+
         currentUser,
+
+        profile,
+
         login: signIn,
+
         register: signUp,
+
         logout: signOut,
+
         loading
+
     };
+
     //----------------------------------------------------------
-    // Esperamos que Firebase determine la sesión.
+    // Esperar autenticación
     //----------------------------------------------------------
+
     if (loading) {
+
         return null;
+
     }
+
     //----------------------------------------------------------
-    // Provider.
+    // Provider
     //----------------------------------------------------------
+
     return (
+
         <AuthContext.Provider value={value}>
+
             {children}
+
         </AuthContext.Provider>
+
     );
+
 };
-// ============================================================
-// EXPORTACIÓN
-// ============================================================
+
 export default AuthContext;

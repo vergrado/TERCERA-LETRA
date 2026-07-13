@@ -32,7 +32,8 @@ import {
 import {
     doc,
     setDoc,
-    serverTimestamp
+    serverTimestamp,
+    getDoc
 } from "firebase/firestore";
 // Instancias creadas previamente.
 import { auth, db } from "../firebase";
@@ -106,4 +107,20 @@ export const resetPassword = async (email) => {
 // ============================================================
 export const currentUser = () => {
     return auth.currentUser;
+};
+// ============================================================
+// OBTENER PERFIL DEL USUARIO
+// ============================================================
+export const getUserProfile = async (uid) => {
+
+    const ref = doc(db, "usuarios", uid);
+
+    const snapshot = await getDoc(ref);
+
+    if (!snapshot.exists()) {
+        return null;
+    }
+
+    return snapshot.data();
+
 };
