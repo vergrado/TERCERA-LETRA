@@ -1,25 +1,18 @@
 // ============================================================
 // CasoForm.jsx
 // ------------------------------------------------------------
-// Página contenedora del formulario de Casos.
-//
-// Plataforma:
-// TERCERA LETRA
-//
-// Responsabilidades:
-//
-// • Mostrar el formulario reutilizable.
-// • Integrarse con DashboardLayout.
-// • Preparar futuras funcionalidades de edición.
-//
+// Página del formulario de Casos.
 // ============================================================
-import { Container } from "react-bootstrap";
+
+import { CaseProvider } from "../../contexts/CaseContext";
 import CaseForm from "../../components/casos/CaseForm";
+
 const CasoForm = () => {
     return (
-        <Container fluid>
+        <CaseProvider>
             <CaseForm />
-        </Container>
+        </CaseProvider>
     );
 };
+
 export default CasoForm;
