@@ -9,21 +9,13 @@
 
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-
 const CaseActions = ({
-
     onView,
-
     onEdit,
-
     onDelete
-
 }) => {
-
     return (
-
         <ButtonGroup size="sm">
-
             <Button
                 variant="outline-primary"
                 onClick={onView}
@@ -31,7 +23,6 @@ const CaseActions = ({
             >
                 <i className="bi bi-eye"></i>
             </Button>
-
             <Button
                 variant="outline-warning"
                 onClick={onEdit}
@@ -39,7 +30,6 @@ const CaseActions = ({
             >
                 <i className="bi bi-pencil"></i>
             </Button>
-
             <Button
                 variant="outline-danger"
                 onClick={onDelete}
@@ -47,11 +37,8 @@ const CaseActions = ({
             >
                 <i className="bi bi-trash"></i>
             </Button>
-
         </ButtonGroup>
-
     );
-
 };
 
 export default CaseActions;

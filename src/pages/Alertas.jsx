@@ -4,7 +4,6 @@
 // Página temporal del módulo Alertas.
 // Plataforma: TERCERA LETRA
 // ============================================================
-
 const Alertas = () => {
     return (
         <div className="container py-4">

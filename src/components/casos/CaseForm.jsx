@@ -6,7 +6,7 @@
 // Plataforma:
 // TERCERA LETRA
 // ============================================================
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Form,
@@ -17,23 +17,33 @@ import {
 } from "react-bootstrap";
 import { useAuth } from "../../contexts/AuthContext";
 import { useCaseContext } from "../../contexts/CaseContext";
-const CaseForm = () => {
+const CaseForm = ({
+    editMode = false,
+    caseData = null
+}) => {
+
     //----------------------------------------------------------
     // Usuario autenticado
     //----------------------------------------------------------
+
     const {
         currentUser,
         profile
     } = useAuth();
+
     //----------------------------------------------------------
     // Contexto de Casos
     //----------------------------------------------------------
+
     const {
-        addCase
+        addCase,
+        editCase
     } = useCaseContext();
+
     //----------------------------------------------------------
     // Navegación
     //----------------------------------------------------------
+
     const navigate = useNavigate();
     //----------------------------------------------------------
     // Estados
@@ -45,6 +55,17 @@ const CaseForm = () => {
     const [prioridad, setPrioridad] = useState("MEDIA");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    //----------------------------------------------------------
+    // Cargar datos cuando se edita
+    //----------------------------------------------------------
+    useEffect(() => {
+        if (!editMode || !caseData) return;
+        setTitulo(caseData.titulo ?? "");
+        setDescripcion(caseData.descripcion ?? "");
+        setInstitucion(caseData.institucion ?? "");
+        setEstado(caseData.estado ?? "PENDIENTE");
+        setPrioridad(caseData.prioridad ?? "MEDIA");
+    }, [editMode, caseData]);
     //----------------------------------------------------------
     // Guardar caso
     //----------------------------------------------------------
@@ -75,21 +96,48 @@ const CaseForm = () => {
         }
         try {
             setLoading(true);
-            await addCase({
-                titulo,
-                descripcion,
-                institucion,
-                estado,
-                prioridad,
-                responsableUid: currentUser.uid,
-                responsableNombre:
-                    profile?.nombre ??
-                    currentUser.email,
-                responsableEmail:
-                    currentUser.email,
-                observaciones: "",
-                archivado: false
-            });
+            //await addCase({
+             //   titulo,
+             //    descripcion,
+             //    institucion,
+             //    estado,
+             //    prioridad,
+             //    responsableUid: currentUser.uid,
+             //    responsableNombre:
+             //        profile?.nombre ??
+             //        currentUser.email,
+             //    responsableEmail:
+            //         currentUser.email,
+            //     observaciones: "",
+             //    archivado: false
+            // });
+             const formData = {
+            titulo,
+            descripcion,
+            institucion,
+            estado,
+            prioridad,
+            responsableUid: currentUser.uid,
+            responsableNombre:
+                profile?.nombre ??
+                currentUser.email,
+            responsableEmail:
+                currentUser.email,
+            observaciones:
+                caseData?.observaciones ?? "",
+            archivado:
+                caseData?.archivado ?? false
+        };
+        if (editMode) {
+            await editCase(
+                caseData.id,
+                formData
+            );
+        }
+        else {
+            await addCase(formData);
+
+        }
             navigate("/casos");
         }
         catch (err) {
@@ -109,8 +157,13 @@ const CaseForm = () => {
         <Card className="shadow">
             <Card.Body>
                 <h3 className="mb-4">
-                    Nuevo Caso
+                   {
+                        editMode
+                            ? "Editar Caso"
+                            : "Nuevo Caso"
+                    }
                 </h3>
+
                 {
                     error && (
                         <Alert variant="danger">
@@ -225,7 +278,11 @@ const CaseForm = () => {
                                             Guardando...
                                         </>
                                     )
+                                    //: "Guardar Caso"
+                                    : editMode
+                                    ? "Actualizar Caso"
                                     : "Guardar Caso"
+
                             }
                         </Button>
                         <Button

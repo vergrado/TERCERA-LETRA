@@ -10,50 +10,56 @@
 // Responsabilidades:
 //
 // • Obtener todos los casos.
+// • Obtener un caso por ID.
 // • Crear casos.
 // • Actualizar casos.
 // • Eliminar casos.
 // • Obtener casos por usuario.
+// • Obtener casos por estado.
 // • Administrar loading.
 // • Administrar errores.
 //
 // ============================================================
 
-
 // ============================================================
 // IMPORTACIONES
 // ============================================================
+
 import {
     useState,
     useEffect,
     useCallback
 } from "react";
+
 import {
     getCases,
+    getCaseById,
     createCase,
     updateCase,
     deleteCase,
     getCasesByUser,
     getCasesByStatus
 } from "../services/caseService";
+
 // ============================================================
 // HOOK
 // ============================================================
+
 const useCases = () => {
     //----------------------------------------------------------
-    // Estado de los casos.
+    // Estado de los casos
     //----------------------------------------------------------
     const [cases, setCases] = useState([]);
     //----------------------------------------------------------
-    // Estado de carga.
+    // Estado de carga
     //----------------------------------------------------------
     const [loading, setLoading] = useState(true);
     //----------------------------------------------------------
-    // Estado de error.
+    // Estado de error
     //----------------------------------------------------------
-    const [error, setError] = useState(null);
+    const [error, setError] =useState(null);
     //----------------------------------------------------------
-    // Cargar todos los casos.
+    // Cargar todos los casos
     //----------------------------------------------------------
     const loadCases = useCallback(async () => {
         try {
@@ -71,28 +77,40 @@ const useCases = () => {
         }
     }, []);
     //----------------------------------------------------------
-    // Crear un caso.
+    // Obtener un caso por ID
+    //----------------------------------------------------------
+    const loadCase = async (id) => {
+        try {
+            return await getCaseById(id);
+        }
+        catch (err) {
+            console.error(err);
+            throw err;
+        }
+    };
+    //----------------------------------------------------------
+    // Crear caso
     //----------------------------------------------------------
     const addCase = async (caseData) => {
         await createCase(caseData);
         await loadCases();
     };
     //----------------------------------------------------------
-    // Actualizar un caso.
+    // Editar caso
     //----------------------------------------------------------
     const editCase = async (id, caseData) => {
         await updateCase(id, caseData);
         await loadCases();
     };
     //----------------------------------------------------------
-    // Eliminar un caso.
+    // Eliminar caso
     //----------------------------------------------------------
     const removeCase = async (id) => {
         await deleteCase(id);
         await loadCases();
     };
     //----------------------------------------------------------
-    // Obtener casos por usuario.
+    // Obtener casos por usuario
     //----------------------------------------------------------
     const loadCasesByUser = async (uid) => {
         try {
@@ -109,7 +127,7 @@ const useCases = () => {
         }
     };
     //----------------------------------------------------------
-    // Obtener casos por estado.
+    // Obtener casos por estado
     //----------------------------------------------------------
     const loadCasesByStatus = async (status) => {
         try {
@@ -126,19 +144,20 @@ const useCases = () => {
         }
     };
     //----------------------------------------------------------
-    // Primera carga.
+    // Primera carga
     //----------------------------------------------------------
     useEffect(() => {
         loadCases();
     }, [loadCases]);
     //----------------------------------------------------------
-    // Información compartida.
+    // Información compartida
     //----------------------------------------------------------
     return {
         cases,
         loading,
         error,
         loadCases,
+        loadCase,
         addCase,
         editCase,
         removeCase,
@@ -146,4 +165,5 @@ const useCases = () => {
         loadCasesByStatus
     };
 };
+
 export default useCases;

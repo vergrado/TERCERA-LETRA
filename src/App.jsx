@@ -54,6 +54,7 @@ import Administracion from "./pages/Administracion";
 import DashboardLayout from "./layouts/DashboardLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import CaseDetail from "./pages/casos/CaseDetail";
+import CaseEdit from "./pages/casos/CaseEdit";
 // ============================================================
 // Componente principal
 // ============================================================
@@ -105,6 +106,10 @@ function App() {
                 <Route
                     path="/casos/:id"
                     element={<CaseDetail />}
+                />
+                <Route
+                    path="/casos/:id/editar"
+                    element={<CaseEdit />}
                 />
                 {/* Personas */}
                 <Route
