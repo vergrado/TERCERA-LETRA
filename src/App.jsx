@@ -14,47 +14,37 @@
 // • Módulos funcionales.
 //
 // ============================================================
-
 import { Routes, Route, Navigate } from "react-router-dom";
-
 // ============================================================
 // Páginas públicas
-// ============================================================
-
+// ===========================================================
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-
 // ============================================================
 // Dashboard
 // ============================================================
-
 import Dashboard from "./pages/Dashboard";
-
 // ============================================================
 // Módulo Casos
 // ============================================================
-
 import Casos from "./pages/casos/Casos";
 import CasoForm from "./pages/casos/CasoForm";
-
 // ============================================================
 // Otros módulos
 // ============================================================
-
 import Personas from "./pages/Personas";
 import Documentos from "./pages/Documentos";
 import Alertas from "./pages/Alertas";
 import Reportes from "./pages/Reportes";
 import Administracion from "./pages/Administracion";
-
 // ============================================================
 // Layout y Seguridad
 // ============================================================
-
 import DashboardLayout from "./layouts/DashboardLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import CaseDetail from "./pages/casos/CaseDetail";
 import CaseEdit from "./pages/casos/CaseEdit";
+import { CaseProvider } from "./contexts/CaseContext";
 // ============================================================
 // Componente principal
 // ============================================================
@@ -82,13 +72,15 @@ function App() {
             {/* =======================================================
                 Rutas privadas
             ======================================================= */}
-            <Route
-                element={
-                    <ProtectedRoute>
-                        <DashboardLayout />
-                    </ProtectedRoute>
-                }
-            >
+                <Route
+                    element={
+                        <ProtectedRoute>
+                            <CaseProvider>
+                                <DashboardLayout />
+                            </CaseProvider>
+                        </ProtectedRoute>
+                    }
+                >
                 {/* Dashboard */}
                 <Route
                     path="/dashboard"
