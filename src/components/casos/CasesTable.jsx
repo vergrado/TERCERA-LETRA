@@ -6,7 +6,9 @@
 // Plataforma:
 // TERCERA LETRA
 // ============================================================
-import { useState } from "react";
+//import { useState } from "react";
+import { useMemo, useState } from "react";
+import SearchBox from "../common/SearchBox";
 import Table from "react-bootstrap/Table";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
@@ -15,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import { useCaseContext } from "../../contexts/CaseContext";
 import CaseActions from "./CaseActions";
 import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
+import CaseFilters from "./CaseFilters";
 const CasesTable = () => {
     //----------------------------------------------------------
     // Contexto
@@ -30,6 +33,17 @@ const CasesTable = () => {
     // Navegación
     //----------------------------------------------------------
     const navigate = useNavigate();
+    //----------------------------------------------------------
+    // Buscador
+    //----------------------------------------------------------
+
+    const [search, setSearch] = useState("");
+    //----------------------------------------------------------
+    // Filtros
+    //----------------------------------------------------------
+    const [estadoFiltro, setEstadoFiltro] = useState("");
+    const [prioridadFiltro, setPrioridadFiltro] = useState("");
+    const [institucionFiltro, setInstitucionFiltro] = useState("");
     //----------------------------------------------------------
     // Modal eliminar
     //----------------------------------------------------------
@@ -76,7 +90,7 @@ const CasesTable = () => {
         try {
             setDeleteLoading(true);
             await removeCase(selectedCase.id);
-            await loadCases();
+            //await loadCases();
             setShowDelete(false);
             setSelectedCase(null);
         }
@@ -87,6 +101,94 @@ const CasesTable = () => {
             setDeleteLoading(false);
         }
     };
+    //----------------------------------------------------------
+    // Instituciones disponibles
+    //----------------------------------------------------------
+
+    const instituciones = useMemo(() => {
+
+        return [
+
+            ...new Set(
+
+                cases
+
+                    .map((item) => item.institucion)
+
+                    .filter(Boolean)
+
+            )
+
+        ].sort();
+
+    }, [cases]);
+    //----------------------------------------------------------
+    // Casos filtrados
+    //----------------------------------------------------------
+
+    //----------------------------------------------------------
+    // Casos filtrados
+    //----------------------------------------------------------
+
+    const filteredCases = useMemo(() => {
+
+        const texto = search.trim().toLowerCase();
+
+        return cases.filter((item) => {
+
+            const coincideBusqueda =
+
+                item.titulo?.toLowerCase().includes(texto) ||
+
+                item.institucion?.toLowerCase().includes(texto) ||
+
+                item.responsableNombre?.toLowerCase().includes(texto);
+
+            const coincideEstado =
+
+                !estadoFiltro ||
+
+                item.estado === estadoFiltro;
+
+            const coincidePrioridad =
+
+                !prioridadFiltro ||
+
+                item.prioridad === prioridadFiltro;
+
+            const coincideInstitucion =
+
+                !institucionFiltro ||
+
+                item.institucion === institucionFiltro;
+
+            return (
+
+                coincideBusqueda &&
+
+                coincideEstado &&
+
+                coincidePrioridad &&
+
+                coincideInstitucion
+
+            );
+
+        });
+
+    }, [
+
+        cases,
+
+        search,
+
+        estadoFiltro,
+
+        prioridadFiltro,
+
+        institucionFiltro
+
+    ]);
     //----------------------------------------------------------
     // Loading
     //----------------------------------------------------------
@@ -125,6 +227,28 @@ const CasesTable = () => {
     //----------------------------------------------------------
     return (
         <>
+            <SearchBox
+                value={search}
+                onChange={setSearch}
+                placeholder="Buscar por título, institución o responsable..."
+            />
+            <CaseFilters
+
+            estado={estadoFiltro}
+
+            prioridad={prioridadFiltro}
+
+            institucion={institucionFiltro}
+
+            instituciones={instituciones}
+
+            onEstadoChange={setEstadoFiltro}
+
+            onPrioridadChange={setPrioridadFiltro}
+
+            onInstitucionChange={setInstitucionFiltro}
+
+            />
             <Table
                 hover
                 striped
@@ -147,7 +271,8 @@ const CasesTable = () => {
                 </thead>
                 <tbody>
                     {
-                        cases.map((item) => (
+                        //cases.map((item) => (
+                            filteredCases.map((item) => (
                             <tr key={item.id}>
                                 <td>
                                     {item.titulo}

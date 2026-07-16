@@ -9,22 +9,19 @@
 // Responsabilidades:
 //
 // • Mostrar encabezado.
-// • Compartir CaseContext.
 // • Mostrar filtros.
 // • Mostrar listado.
 // • Preparar navegación hacia Nuevo Caso.
 //
 // ============================================================
-
 // ============================================================
 // IMPORTACIONES
 // ============================================================
 import { Button } from "react-bootstrap";
 import { FaPlus } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-//import { CaseProvider } from "../../contexts/CaseContext";
 import CasesHeader from "../../components/casos/CasesHeader";
-import CaseFilters from "../../components/casos/CaseFilters";
+//import CaseFilters from "../../components/casos/CaseFilters";
 import CasesTable from "../../components/casos/CasesTable";
 import "../../styles/cases/cases.css";
 // ============================================================
@@ -32,17 +29,17 @@ import "../../styles/cases/cases.css";
 // ============================================================
 const Casos = () => {
     //----------------------------------------------------------
-    // Navegación.
+    // Navegación
     //----------------------------------------------------------
     const navigate = useNavigate();
     //----------------------------------------------------------
-    // Ir al formulario.
+    // Nuevo caso
     //----------------------------------------------------------
     const handleNewCase = () => {
         navigate("/casos/nuevo");
     };
     //----------------------------------------------------------
-    // Interfaz.
+    // Interfaz
     //----------------------------------------------------------
     return (
         <div className="cases-page">
@@ -55,13 +52,13 @@ const Casos = () => {
                     variant="primary"
                     onClick={handleNewCase}
                 >
-                    <FaPlus className="me-2"/>
+                    <FaPlus className="me-2" />
                     Nuevo Caso
                 </Button>
             </div>
-            <CaseFilters />
+    
             <CasesTable />
         </div>
     );
-    };
-    export default Casos;
+};
+export default Casos;
