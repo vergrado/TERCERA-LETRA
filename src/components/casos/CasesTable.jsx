@@ -18,6 +18,7 @@ import { useCaseContext } from "../../contexts/CaseContext";
 import CaseActions from "./CaseActions";
 import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
 import CaseFilters from "./CaseFilters";
+import Pagination from "react-bootstrap/Pagination";
 const CasesTable = () => {
     //----------------------------------------------------------
     // Contexto
@@ -44,6 +45,16 @@ const CasesTable = () => {
     const [estadoFiltro, setEstadoFiltro] = useState("");
     const [prioridadFiltro, setPrioridadFiltro] = useState("");
     const [institucionFiltro, setInstitucionFiltro] = useState("");
+    //----------------------------------------------------------
+    // Ordenamiento
+    //----------------------------------------------------------
+    const [sortField, setSortField] = useState("fechaCreacion");
+    const [sortDirection, setSortDirection] = useState("desc");
+    //----------------------------------------------------------
+    // Paginación
+    //----------------------------------------------------------
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
     //----------------------------------------------------------
     // Modal eliminar
     //----------------------------------------------------------
@@ -104,91 +115,112 @@ const CasesTable = () => {
     //----------------------------------------------------------
     // Instituciones disponibles
     //----------------------------------------------------------
-
     const instituciones = useMemo(() => {
-
         return [
-
             ...new Set(
-
                 cases
-
                     .map((item) => item.institucion)
-
                     .filter(Boolean)
-
             )
-
         ].sort();
-
     }, [cases]);
     //----------------------------------------------------------
     // Casos filtrados
     //----------------------------------------------------------
-
-    //----------------------------------------------------------
-    // Casos filtrados
-    //----------------------------------------------------------
-
     const filteredCases = useMemo(() => {
-
         const texto = search.trim().toLowerCase();
-
         return cases.filter((item) => {
-
             const coincideBusqueda =
-
                 item.titulo?.toLowerCase().includes(texto) ||
-
                 item.institucion?.toLowerCase().includes(texto) ||
-
                 item.responsableNombre?.toLowerCase().includes(texto);
-
             const coincideEstado =
-
                 !estadoFiltro ||
-
                 item.estado === estadoFiltro;
-
             const coincidePrioridad =
-
                 !prioridadFiltro ||
-
                 item.prioridad === prioridadFiltro;
-
             const coincideInstitucion =
-
                 !institucionFiltro ||
-
                 item.institucion === institucionFiltro;
-
             return (
-
                 coincideBusqueda &&
-
                 coincideEstado &&
-
                 coincidePrioridad &&
-
                 coincideInstitucion
-
             );
-
         });
-
     }, [
-
         cases,
-
         search,
-
         estadoFiltro,
-
         prioridadFiltro,
-
         institucionFiltro
-
     ]);
+    //----------------------------------------------------------
+    // Casos ordenados
+    //----------------------------------------------------------
+    const sortedCases = useMemo(() => {
+        const items = [...filteredCases];
+        items.sort((a, b) => {
+            let valueA = a[sortField];
+            let valueB = b[sortField];
+            if (sortField === "fechaCreacion") {
+                valueA = valueA?.toDate?.() ?? new Date(0);
+                valueB = valueB?.toDate?.() ?? new Date(0);
+            }
+            if (typeof valueA === "string") {
+                valueA = valueA.toLowerCase();
+            }
+            if (typeof valueB === "string") {
+                valueB = valueB.toLowerCase();
+            }
+            if (valueA < valueB) {
+                return sortDirection === "asc" ? -1 : 1;
+            }
+            if (valueA > valueB) {
+                return sortDirection === "asc" ? 1 : -1;
+            }
+            return 0;
+        });
+        return items;
+    }, [
+        filteredCases,
+        sortField,
+        sortDirection
+    ]);
+    //----------------------------------------------------------
+    // Datos paginados
+    //----------------------------------------------------------
+    const totalPages = Math.ceil(
+        sortedCases.length / itemsPerPage
+    );
+    const paginatedCases = useMemo(() => {
+        const start =
+            (currentPage - 1) * itemsPerPage;
+        const end =
+            start + itemsPerPage;
+        return sortedCases.slice(start, end);
+    }, [
+        sortedCases,
+        currentPage
+    ]);
+    //----------------------------------------------------------
+    // Cambiar orden
+    //----------------------------------------------------------
+    const handleSort = (field) => {
+        if (field === sortField) {
+            setSortDirection((prev) =>
+                prev === "asc"
+                    ? "desc"
+                    : "asc"
+            );
+        }
+        else {
+            setSortField(field);
+            setSortDirection("asc");
+        }
+    };
     //----------------------------------------------------------
     // Loading
     //----------------------------------------------------------
@@ -233,21 +265,13 @@ const CasesTable = () => {
                 placeholder="Buscar por título, institución o responsable..."
             />
             <CaseFilters
-
             estado={estadoFiltro}
-
             prioridad={prioridadFiltro}
-
             institucion={institucionFiltro}
-
             instituciones={instituciones}
-
             onEstadoChange={setEstadoFiltro}
-
             onPrioridadChange={setPrioridadFiltro}
-
             onInstitucionChange={setInstitucionFiltro}
-
             />
             <Table
                 hover
@@ -258,13 +282,46 @@ const CasesTable = () => {
             >
                 <thead className="table-dark">
                     <tr>
-                        <th>Título</th>
-                        <th>Institución</th>
-                        <th>Estado</th>
-                        <th>Prioridad</th>
-                        <th>Responsable</th>
-                        <th>Fecha</th>
-                        <th width="150">
+                       <th
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSort("titulo")}
+                        >
+                            Título
+                        </th>
+                        <th
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSort("institucion")}
+                        >
+                            Institución
+                        </th>
+                        <th
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSort("estado")}
+                        >
+                            Estado
+                        </th>
+                        <th
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSort("prioridad")}
+                        >
+                            Prioridad
+                        </th>
+                        <th
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSort("responsableNombre")}
+                        >
+                            Responsable
+                        </th>
+                        <th
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSort("fechaCreacion")}
+                        >
+                            Fecha
+                        </th>
+                        <th
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSort("acciones")}
+                        >
                             Acciones
                         </th>
                     </tr>
@@ -272,7 +329,8 @@ const CasesTable = () => {
                 <tbody>
                     {
                         //cases.map((item) => (
-                            filteredCases.map((item) => (
+                            //filteredCases.map((item) => (
+                            paginatedCases.map((item) => (
                             <tr key={item.id}>
                                 <td>
                                     {item.titulo}
@@ -322,6 +380,33 @@ const CasesTable = () => {
                     }
                 </tbody>
             </Table>
+            <Pagination className="justify-content-center mt-4">
+            <Pagination.Prev
+                disabled={currentPage === 1}
+                onClick={() =>
+                    setCurrentPage(currentPage - 1)
+                }
+            />
+            {
+                [...Array(totalPages)].map((_, index) => (
+                    <Pagination.Item
+                        key={index + 1}
+                        active={currentPage === index + 1}
+                        onClick={() =>
+                            setCurrentPage(index + 1)
+                        }
+                    >
+                        {index + 1}
+                    </Pagination.Item>
+                ))
+            }
+            <Pagination.Next
+                disabled={currentPage === totalPages}
+                onClick={() =>
+                    setCurrentPage(currentPage + 1)
+                }
+            />
+        </Pagination>
             <ConfirmDeleteModal
                 show={showDelete}
                 title="Eliminar Caso"

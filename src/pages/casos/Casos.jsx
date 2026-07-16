@@ -24,6 +24,8 @@ import CasesHeader from "../../components/casos/CasesHeader";
 //import CaseFilters from "../../components/casos/CaseFilters";
 import CasesTable from "../../components/casos/CasesTable";
 import "../../styles/cases/cases.css";
+import CasesDashboard from "../../components/casos/CasesDashboard";
+import { useCaseContext } from "../../contexts/CaseContext";
 // ============================================================
 // COMPONENTE
 // ============================================================
@@ -39,11 +41,14 @@ const Casos = () => {
         navigate("/casos/nuevo");
     };
     //----------------------------------------------------------
+    const { cases } = useCaseContext();
+    //----------------------------------------------------------
     // Interfaz
     //----------------------------------------------------------
     return (
         <div className="cases-page">
             <CasesHeader />
+            <CasesDashboard cases={cases} />
             <div className="d-flex justify-content-between align-items-center mb-4">
                 <h2 className="mb-0">
                     Gestión de Casos

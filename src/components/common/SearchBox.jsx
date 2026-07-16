@@ -22,33 +22,18 @@ const SearchBox = ({
     onChange,
     placeholder = "Buscar..."
 }) => {
-
     return (
-
         <InputGroup className="mb-4">
-
             <InputGroup.Text>
-
                 <i className="bi bi-search"></i>
-
             </InputGroup.Text>
-
             <Form.Control
-
                 type="text"
-
                 placeholder={placeholder}
-
                 value={value}
-
                 onChange={(e) => onChange(e.target.value)}
-
             />
-
         </InputGroup>
-
     );
-
 };
-
 export default SearchBox;

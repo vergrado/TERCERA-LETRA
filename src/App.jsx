@@ -60,133 +60,97 @@ import { CaseProvider } from "./contexts/CaseContext";
 // ============================================================
 // COMPONENTE PRINCIPAL
 // ============================================================
-
 function App() {
-
     return (
-
         <Routes>
-
             {/* =======================================================
                 Ruta inicial
             ======================================================= */}
-
             <Route
                 path="/"
                 element={<Navigate to="/login" replace />}
             />
-
             {/* =======================================================
                 Rutas públicas
             ======================================================= */}
-
             <Route
                 path="/login"
                 element={<Login />}
             />
-
             <Route
                 path="/register"
                 element={<Register />}
             />
-
             {/* =======================================================
                 Rutas privadas
             ======================================================= */}
-
             <Route
                 element={
                     <ProtectedRoute>
-
                         <CaseProvider>
-
                             <DashboardLayout />
-
                         </CaseProvider>
-
                     </ProtectedRoute>
                 }
             >
-
                 {/* Dashboard */}
-
                 <Route
                     path="/dashboard"
                     element={<Dashboard />}
                 />
-
                 {/* Casos */}
-
                 <Route
                     path="/casos"
                     element={<Casos />}
                 />
-
                 <Route
                     path="/casos/nuevo"
                     element={<CasoForm />}
                 />
-
                 <Route
                     path="/casos/:id"
                     element={<CaseDetail />}
                 />
-
                 <Route
                     path="/casos/:id/editar"
                     element={<CaseEdit />}
                 />
-
                 {/* Personas */}
-
                 <Route
                     path="/personas"
                     element={<Personas />}
                 />
-
                 {/* Documentos */}
-
                 <Route
                     path="/documentos"
                     element={<Documentos />}
                 />
-
                 {/* Alertas */}
-
                 <Route
                     path="/alertas"
                     element={<Alertas />}
                 />
-
                 {/* Reportes */}
 
                 <Route
                     path="/reportes"
                     element={<Reportes />}
                 />
-
                 {/* Administración */}
 
                 <Route
                     path="/administracion"
                     element={<Administracion />}
                 />
-
             </Route>
-
             {/* =======================================================
                 Ruta inexistente
             ======================================================= */}
-
             <Route
                 path="*"
                 element={<Navigate to="/login" replace />}
             />
-
         </Routes>
-
     );
-
 }
-
 export default App;
