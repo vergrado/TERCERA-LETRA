@@ -27,7 +27,8 @@ import {
     useEffect
 } from "react";
 import {
-    useNavigate
+    useNavigate,
+    useSearchParams
 } from "react-router-dom";
 import {
     useAuth
@@ -72,7 +73,7 @@ const useCaseForm = (
     // Navegación
     //----------------------------------------------------------
     const navigate = useNavigate();
-
+    const [searchParams] = useSearchParams();
     //----------------------------------------------------------
     // Toasts
     //----------------------------------------------------------
@@ -86,6 +87,7 @@ const useCaseForm = (
     const [estado, setEstado] = useState("PENDIENTE");
     const [prioridad, setPrioridad] = useState("MEDIA");
     const [personaId, setPersonaId] = useState("");
+    const personaIdFromUrl = searchParams.get("personaId");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     //----------------------------------------------------------
@@ -100,6 +102,28 @@ const useCaseForm = (
         setPrioridad(caseData.prioridad ?? "MEDIA");
         setPersonaId(caseData.personaId ?? "");
     }, [editMode, caseData]);
+    //----------------------------------------------------------
+    // Persona recibida por URL (Nuevo Caso)
+    //----------------------------------------------------------
+    useEffect(() => {
+        if (
+            !editMode &&
+            personaIdFromUrl &&
+            persons.length > 0
+        ) {
+            const existe = persons.some(
+                person => person.id === personaIdFromUrl
+            );
+
+            if (existe) {
+                setPersonaId(personaIdFromUrl);
+            }
+        }
+    }, [
+        editMode,
+        personaIdFromUrl,
+        persons
+    ]);
     //----------------------------------------------------------
     // Guardar formulario
     //----------------------------------------------------------
@@ -165,13 +189,11 @@ const useCaseForm = (
                     caseData.id,
                     formData
                 );
-
                 showToast(
                     "Caso actualizado",
                     "El caso fue actualizado correctamente.",
                     "warning"
                 );
-
             }
             else {
                 await addCase(formData);
@@ -181,7 +203,12 @@ const useCaseForm = (
                     "success"
                 );
             }
-            navigate("/casos");
+            //navigate("/casos");
+            if (!editMode && personaIdFromUrl) {
+                navigate(`/personas/${personaIdFromUrl}`);
+            } else {
+                navigate("/casos");
+            }
         }
         catch (err) {
             console.error(err);
@@ -194,7 +221,6 @@ const useCaseForm = (
                 "danger"
             );
         }
-
         finally {
             setLoading(false);
         }
