@@ -45,6 +45,9 @@ const CaseForm = ({
         setDescripcion,
         institucion,
         setInstitucion,
+         persons,
+        personaId,
+        setPersonaId,
         estado,
         setEstado,
         prioridad,
@@ -84,10 +87,16 @@ const CaseForm = ({
                     <CaseBasicFields
                         titulo={titulo}
                         setTitulo={setTitulo}
+
                         descripcion={descripcion}
                         setDescripcion={setDescripcion}
+
                         institucion={institucion}
                         setInstitucion={setInstitucion}
+
+                        persons={persons}
+                        personaId={personaId}
+                        setPersonaId={setPersonaId}
                     />
                     <CaseStatusFields
                         estado={estado}

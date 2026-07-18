@@ -21,7 +21,10 @@ const CaseBasicFields = ({
     descripcion,
     setDescripcion,
     institucion,
-    setInstitucion
+    setInstitucion,
+    persons,
+    personaId,
+    setPersonaId
 }) => {
     return (
         <>
@@ -77,6 +80,33 @@ const CaseBasicFields = ({
                     required
                 />
             </Form.Group>
+            <Form.Group className="mb-3">
+
+            <Form.Label>
+                Persona asociada
+            </Form.Label>
+
+            <Form.Select
+                value={personaId}
+                onChange={(e) =>
+                    setPersonaId(e.target.value)
+                }
+            >
+                <option value="">
+                    Seleccione una persona
+                </option>
+                {persons.map((person) => (
+                    <option
+                        key={person.id}
+                        value={person.id}
+                    >
+                        {person.nombres} {person.apellidos}
+                        {" - "}
+                        {person.rut}
+                    </option>
+                ))}
+            </Form.Select>
+        </Form.Group>
         </>
     );
 };

@@ -8,28 +8,38 @@
 // ============================================================
 //import { useState } from "react";
 import { useMemo, useState } from "react";
-import SearchBox from "../common/SearchBox";
+//import SearchBox from "../common/SearchBox";
 import Table from "react-bootstrap/Table";
 import Spinner from "react-bootstrap/Spinner";
 import Alert from "react-bootstrap/Alert";
 import Badge from "react-bootstrap/Badge";
 import { useNavigate } from "react-router-dom";
 import { useCaseContext } from "../../contexts/CaseContext";
-import CaseActions from "./CaseActions";
+import { useToast } from "../../contexts/ToastContext";
+import TableActions from "../common/TableActions";
+//import CaseActions from "./CaseActions";
 import ConfirmDeleteModal from "../common/ConfirmDeleteModal";
-import CaseFilters from "./CaseFilters";
+//import CaseFilters from "./CaseFilters";
 import Pagination from "react-bootstrap/Pagination";
-const CasesTable = () => {
+//const CasesTable = () => {
+const CasesTable = ({ cases }) => {
     //----------------------------------------------------------
     // Contexto
     //----------------------------------------------------------
-    const {
-        cases,
+        const {
         loading,
         error,
         removeCase,
         loadCases
     } = useCaseContext();
+    //const {
+    //loading,
+    //error,
+    //removeCase,
+    //loadCases
+    //} = useCaseContext();
+    //----------------------------------------------------------
+    const { showToast } = useToast();
     //----------------------------------------------------------
     // Navegación
     //----------------------------------------------------------
@@ -38,13 +48,13 @@ const CasesTable = () => {
     // Buscador
     //----------------------------------------------------------
 
-    const [search, setSearch] = useState("");
+    //const [search, setSearch] = useState("");
     //----------------------------------------------------------
     // Filtros
     //----------------------------------------------------------
-    const [estadoFiltro, setEstadoFiltro] = useState("");
-    const [prioridadFiltro, setPrioridadFiltro] = useState("");
-    const [institucionFiltro, setInstitucionFiltro] = useState("");
+    //const [estadoFiltro, setEstadoFiltro] = useState("");
+    //const [prioridadFiltro, setPrioridadFiltro] = useState("");
+    //const [institucionFiltro, setInstitucionFiltro] = useState("");
     //----------------------------------------------------------
     // Ordenamiento
     //----------------------------------------------------------
@@ -115,53 +125,82 @@ const CasesTable = () => {
     //----------------------------------------------------------
     // Instituciones disponibles
     //----------------------------------------------------------
-    const instituciones = useMemo(() => {
-        return [
-            ...new Set(
-                cases
-                    .map((item) => item.institucion)
-                    .filter(Boolean)
-            )
-        ].sort();
-    }, [cases]);
+    //const instituciones = useMemo(() => {
+      //  return [
+        //    ...new Set(
+          //      cases
+        //           .map((item) => item.institucion)
+        //            .filter(Boolean)
+         //   )
+       // ].sort();
+    //}, [cases]);
     //----------------------------------------------------------
     // Casos filtrados
     //----------------------------------------------------------
-    const filteredCases = useMemo(() => {
-        const texto = search.trim().toLowerCase();
-        return cases.filter((item) => {
-            const coincideBusqueda =
-                item.titulo?.toLowerCase().includes(texto) ||
-                item.institucion?.toLowerCase().includes(texto) ||
-                item.responsableNombre?.toLowerCase().includes(texto);
-            const coincideEstado =
-                !estadoFiltro ||
-                item.estado === estadoFiltro;
-            const coincidePrioridad =
-                !prioridadFiltro ||
-                item.prioridad === prioridadFiltro;
-            const coincideInstitucion =
-                !institucionFiltro ||
-                item.institucion === institucionFiltro;
-            return (
-                coincideBusqueda &&
-                coincideEstado &&
-                coincidePrioridad &&
-                coincideInstitucion
-            );
-        });
-    }, [
-        cases,
-        search,
-        estadoFiltro,
-        prioridadFiltro,
-        institucionFiltro
-    ]);
+    //const filteredCases = useMemo(() => {
+        //const texto = search.trim().toLowerCase();
+       // return cases.filter((item) => {
+          //  const coincideBusqueda =
+             //   item.titulo?.toLowerCase().includes(texto) ||
+            //    item.institucion?.toLowerCase().includes(texto) ||
+             //   item.responsableNombre?.toLowerCase().includes(texto);
+           // const coincideEstado =
+              //  !estadoFiltro ||
+              //  item.estado === estadoFiltro;
+            //const coincidePrioridad =
+              //  !prioridadFiltro ||
+               // item.prioridad === prioridadFiltro;
+            //const coincideInstitucion =
+              //  !institucionFiltro ||
+             //   item.institucion === institucionFiltro;
+            //return (
+             //   coincideBusqueda &&
+             //   coincideEstado &&
+            //    coincidePrioridad &&
+             //   coincideInstitucion
+           // );
+       // });
+   // }, [
+      //  cases,
+       // search,
+      //  estadoFiltro,
+      //  prioridadFiltro,
+      //  institucionFiltro
+    //]);
     //----------------------------------------------------------
     // Casos ordenados
     //----------------------------------------------------------
-    const sortedCases = useMemo(() => {
-        const items = [...filteredCases];
+   // const sortedCases = useMemo(() => {
+    //    const items = [...filteredCases];
+     //   items.sort((a, b) => {
+      //      let valueA = a[sortField];
+       //     let valueB = b[sortField];
+       //     if (sortField === "fechaCreacion") {
+        //        valueA = valueA?.toDate?.() ?? new Date(0);
+         //       valueB = valueB?.toDate?.() ?? new Date(0);
+          //  }
+           // if (typeof valueA === "string") {
+           //     valueA = valueA.toLowerCase();
+            //}
+           // if (typeof valueB === "string") {
+             //   valueB = valueB.toLowerCase();
+            //}
+            //if (valueA < valueB) {
+             //   return sortDirection === "asc" ? -1 : 1;
+            //}
+           // if (valueA > valueB) {
+             //   return sortDirection === "asc" ? 1 : -1;
+            //}
+            //return 0;
+        //});
+        //return items;
+    //}, [
+      //  filteredCases,
+     //   sortField,
+      //  sortDirection
+    //]);
+        const sortedCases = useMemo(() => {
+        const items = [...cases];
         items.sort((a, b) => {
             let valueA = a[sortField];
             let valueB = b[sortField];
@@ -185,11 +224,11 @@ const CasesTable = () => {
         });
         return items;
     }, [
-        filteredCases,
+        cases,
         sortField,
         sortDirection
     ]);
-    //----------------------------------------------------------
+        //----------------------------------------------------------
     // Datos paginados
     //----------------------------------------------------------
     const totalPages = Math.ceil(
@@ -259,20 +298,6 @@ const CasesTable = () => {
     //----------------------------------------------------------
     return (
         <>
-            <SearchBox
-                value={search}
-                onChange={setSearch}
-                placeholder="Buscar por título, institución o responsable..."
-            />
-            <CaseFilters
-            estado={estadoFiltro}
-            prioridad={prioridadFiltro}
-            institucion={institucionFiltro}
-            instituciones={instituciones}
-            onEstadoChange={setEstadoFiltro}
-            onPrioridadChange={setPrioridadFiltro}
-            onInstitucionChange={setInstitucionFiltro}
-            />
             <Table
                 hover
                 striped
@@ -287,6 +312,12 @@ const CasesTable = () => {
                             onClick={() => handleSort("titulo")}
                         >
                             Título
+                        </th>
+                        <th
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSort("personaNombre")}
+                        >
+                            Persona
                         </th>
                         <th
                             style={{ cursor: "pointer" }}
@@ -339,6 +370,32 @@ const CasesTable = () => {
                                     {item.institucion}
                                 </td>
                                 <td>
+                                    {item.personaNombre && item.personaId ? (
+                                        <>
+                                            <button
+                                                type="button"
+                                                className="btn btn-link p-0 fw-semibold text-decoration-none text-start"
+                                                onClick={() =>
+                                                    navigate(`/personas/${item.personaId}`)
+                                                }
+                                            >
+                                                {item.personaNombre}
+                                            </button>
+
+                                            <div>
+                                                <small className="text-muted">
+                                                    {item.personaRut}
+                                                </small>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <span className="text-muted">
+                                            Sin persona
+                                        </span>
+                                    )}
+                                </td>
+
+                                <td>
                                     <Badge bg={getEstadoBadge(item.estado)}>
                                         {item.estado}
                                     </Badge>
@@ -362,18 +419,18 @@ const CasesTable = () => {
                                     }
                                 </td>
                                 <td>
-                                    <CaseActions
-                                        onView={() =>
-                                            navigate(`/casos/${item.id}`)
-                                        }
-                                        onEdit={() =>
-                                            navigate(`/casos/${item.id}/editar`)
-                                        }
-                                        onDelete={() => {
-                                            setSelectedCase(item);
-                                            setShowDelete(true);
-                                        }}
-                                    />
+                                <TableActions
+                                    onView={() =>
+                                        navigate(`/casos/${item.id}`)
+                                    }
+                                    onEdit={() =>
+                                        navigate(`/casos/${item.id}/editar`)
+                                    }
+                                    onDelete={() => {
+                                        setSelectedCase(item);
+                                        setShowDelete(true);
+                                    }}
+                                />
                                 </td>
                             </tr>
                         ))

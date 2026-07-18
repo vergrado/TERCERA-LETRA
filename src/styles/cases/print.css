@@ -1,0 +1,39 @@
+/* ==========================================================
+   Estilos de impresión
+========================================================== */
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .cases-page,
+    .cases-page * {
+        visibility: visible;
+    }
+    .cases-page {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+    }
+    button,
+    .btn,
+    .pagination,
+    .modal,
+    .input-group,
+    .row.mb-3 {
+        display: none !important;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th,
+    td {
+        border: 1px solid #000;
+        padding: 6px;
+        font-size: 11px;
+    }
+    thead {
+        background: #f2f2f2 !important;
+    }
+}

@@ -35,6 +35,12 @@ import {
 import {
     useCaseContext
 } from "../contexts/CaseContext";
+import {
+    usePersonContext
+} from "../contexts/PersonContext";
+import {
+    useToast
+} from "../contexts/ToastContext";
 // ============================================================
 // HOOK
 // ============================================================
@@ -57,9 +63,20 @@ const useCaseForm = (
         editCase
     } = useCaseContext();
     //----------------------------------------------------------
+    // Contexto de Personas
+    //----------------------------------------------------------
+    const {
+        persons
+    } = usePersonContext();
+    //----------------------------------------------------------
     // Navegación
     //----------------------------------------------------------
     const navigate = useNavigate();
+
+    //----------------------------------------------------------
+    // Toasts
+    //----------------------------------------------------------
+    const { showToast } = useToast();
     //----------------------------------------------------------
     // Estados del formulario
     //----------------------------------------------------------
@@ -68,6 +85,7 @@ const useCaseForm = (
     const [institucion, setInstitucion] = useState("");
     const [estado, setEstado] = useState("PENDIENTE");
     const [prioridad, setPrioridad] = useState("MEDIA");
+    const [personaId, setPersonaId] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     //----------------------------------------------------------
@@ -80,6 +98,7 @@ const useCaseForm = (
         setInstitucion(caseData.institucion ?? "");
         setEstado(caseData.estado ?? "PENDIENTE");
         setPrioridad(caseData.prioridad ?? "MEDIA");
+        setPersonaId(caseData.personaId ?? "");
     }, [editMode, caseData]);
     //----------------------------------------------------------
     // Guardar formulario
@@ -111,12 +130,24 @@ const useCaseForm = (
         }
         try {
             setLoading(true);
+            const personaSeleccionada = persons.find(
+                (person) => person.id === personaId
+            );
             const formData = {
                 titulo,
                 descripcion,
                 institucion,
                 estado,
                 prioridad,
+                personaId,
+
+                personaNombre: personaSeleccionada
+                    ? `${personaSeleccionada.nombres || ""} ${personaSeleccionada.apellidos || ""}`.trim()
+                    : "",
+
+                personaRut:
+                    personaSeleccionada?.rut ?? "",
+
                 responsableUid: currentUser.uid,
                 responsableNombre:
                     profile?.nombre ??
@@ -129,13 +160,26 @@ const useCaseForm = (
                     caseData?.archivado ?? false
             };
             if (editMode) {
+
                 await editCase(
                     caseData.id,
                     formData
                 );
+
+                showToast(
+                    "Caso actualizado",
+                    "El caso fue actualizado correctamente.",
+                    "warning"
+                );
+
             }
             else {
                 await addCase(formData);
+                showToast(
+                    "Caso creado",
+                    "El caso fue registrado correctamente.",
+                    "success"
+                );
             }
             navigate("/casos");
         }
@@ -144,7 +188,13 @@ const useCaseForm = (
             setError(
                 "No fue posible guardar el caso."
             );
+            showToast(
+                "Error",
+                "No fue posible guardar el caso.",
+                "danger"
+            );
         }
+
         finally {
             setLoading(false);
         }
@@ -154,19 +204,22 @@ const useCaseForm = (
     //----------------------------------------------------------
     return {
         titulo,
-        setTitulo,
-        descripcion,
-        setDescripcion,
-        institucion,
-        setInstitucion,
-        estado,
-        setEstado,
-        prioridad,
-        setPrioridad,
-        loading,
-        error,
-        handleSubmit
-    };
+            setTitulo,
+            descripcion,
+            setDescripcion,
+            institucion,
+            setInstitucion,
+            estado,
+            setEstado,
+            prioridad,
+            setPrioridad,
+            persons,
+            personaId,
+            setPersonaId,
+            loading,
+            error,
+            handleSubmit
+            };
 };
 // ============================================================
 // EXPORTACIÓN

@@ -14,55 +14,50 @@
 // • Módulos funcionales.
 //
 // ============================================================
-
 import { Routes, Route, Navigate } from "react-router-dom";
-
 // ============================================================
 // Páginas públicas
 // ============================================================
-
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-
 // ============================================================
 // Dashboard
 // ============================================================
-
-import Dashboard from "./pages/Dashboard";
-
+import Dashboard from "./pages/Dashboard"
 // ============================================================
 // Módulo Casos
 // ============================================================
-
 import Casos from "./pages/casos/Casos";
 import CasoForm from "./pages/casos/CasoForm";
 import CaseDetail from "./pages/casos/CaseDetail";
 import CaseEdit from "./pages/casos/CaseEdit";
-
 // ============================================================
 // Otros módulos
 // ============================================================
-
 import Personas from "./pages/Personas";
+import NuevaPersona from "./pages/personas/NuevaPersona";
+import PersonaDetail from "./pages/personas/PersonaDetail";
+import PersonaEdit from "./pages/personas/PersonaEdit";
+
 import Documentos from "./pages/Documentos";
 import Alertas from "./pages/Alertas";
 import Reportes from "./pages/Reportes";
 import Administracion from "./pages/Administracion";
-
 // ============================================================
 // Layout y Seguridad
 // ============================================================
-
 import DashboardLayout from "./layouts/DashboardLayout";
 import ProtectedRoute from "./routes/ProtectedRoute";
 import { CaseProvider } from "./contexts/CaseContext";
-
+import { ToastProvider } from "./contexts/ToastContext";
+import { PersonProvider } from "./contexts/PersonContext";
 // ============================================================
 // COMPONENTE PRINCIPAL
 // ============================================================
 function App() {
     return (
-        <Routes>
+        <ToastProvider>
+            <Routes>
             {/* =======================================================
                 Ruta inicial
             ======================================================= */}
@@ -86,11 +81,13 @@ function App() {
             ======================================================= */}
             <Route
                 element={
-                    <ProtectedRoute>
-                        <CaseProvider>
-                            <DashboardLayout />
-                        </CaseProvider>
-                    </ProtectedRoute>
+            <ProtectedRoute>
+                <CaseProvider>
+                    <PersonProvider>
+                        <DashboardLayout />
+                    </PersonProvider>
+                </CaseProvider>
+            </ProtectedRoute>
                 }
             >
                 {/* Dashboard */}
@@ -116,10 +113,25 @@ function App() {
                     element={<CaseEdit />}
                 />
                 {/* Personas */}
-                <Route
-                    path="/personas"
-                    element={<Personas />}
-                />
+            <Route
+                path="/personas"
+                element={<Personas />}
+            />
+
+            <Route
+                path="/personas/nuevo"
+                element={<NuevaPersona />}
+            />
+
+            <Route
+                path="/personas/:id"
+                element={<PersonaDetail />}
+            />
+
+            <Route
+                path="/personas/:id/editar"
+                element={<PersonaEdit />}
+            />
                 {/* Documentos */}
                 <Route
                     path="/documentos"
@@ -150,7 +162,8 @@ function App() {
                 path="*"
                 element={<Navigate to="/login" replace />}
             />
-        </Routes>
+            </Routes>
+        </ToastProvider>
     );
 }
 export default App;
