@@ -26,13 +26,15 @@ import {
     useState,
     useCallback
 } from "react";
+
 import {
     getTotalCases,
     getTotalPeople,
     getTotalDocuments,
     getTotalAlerts,
     getRecentCases,
-    getRecentActivity
+    getRecentActivity,
+    getCaseStatistics
 } from "../services/dashboardService";
 // ============================================================
 // HOOK
@@ -51,6 +53,18 @@ const useDashboard = () => {
     });
     const [recentCases, setRecentCases] = useState([]);
     const [recentActivity, setRecentActivity] = useState([]);
+    const [caseStatistics, setCaseStatistics] = useState({
+    activeCases: 0,
+    closedCases: 0,
+    highPriorityCases: 0,
+    casesByStatus: [],
+    casesByPriority: [],
+    casesByType: []
+});
+    //const [casesByStatus, setCasesByStatus] = useState([]);
+    //const [casesByPriority, setCasesByPriority] = useState([]);
+   //const [casesByType, setCasesByType] = useState([]);
+    //const [upcomingDeadlines, setUpcomingDeadlines] = useState([]);
     //----------------------------------------------------------
     // Cargar Dashboard.
     //----------------------------------------------------------
@@ -67,14 +81,16 @@ const useDashboard = () => {
                 totalDocuments,
                 totalAlerts,
                 cases,
-                activity
+                activity,
+                statistics
             ] = await Promise.all([
                 getTotalCases(),
                 getTotalPeople(),
                 getTotalDocuments(),
                 getTotalAlerts(),
                 getRecentCases(),
-                getRecentActivity()
+                getRecentActivity(),
+                getCaseStatistics()
             ]);
             //--------------------------------------------------
             // KPIs.
@@ -90,6 +106,7 @@ const useDashboard = () => {
             //--------------------------------------------------
             setRecentCases(cases);
             setRecentActivity(activity);
+            setCaseStatistics(statistics);
         }
         catch (err) {
             console.error(err);
@@ -114,6 +131,7 @@ const useDashboard = () => {
         kpis,
         recentCases,
         recentActivity,
+        caseStatistics,
         loadDashboard
     };
 };

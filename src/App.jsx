@@ -23,7 +23,7 @@ import Register from "./pages/Register";
 // ============================================================
 // Dashboard
 // ============================================================
-import Dashboard from "./pages/Dashboard"
+import Dashboard from "./pages/Dashboard";
 // ============================================================
 // Módulo Casos
 // ============================================================
@@ -51,6 +51,7 @@ import ProtectedRoute from "./routes/ProtectedRoute";
 import { CaseProvider } from "./contexts/CaseContext";
 import { ToastProvider } from "./contexts/ToastContext";
 import { PersonProvider } from "./contexts/PersonContext";
+import { DocumentProvider } from "./contexts/DocumentContext";
 // ============================================================
 // COMPONENTE PRINCIPAL
 // ============================================================
@@ -81,13 +82,15 @@ function App() {
             ======================================================= */}
             <Route
                 element={
-            <ProtectedRoute>
-                <CaseProvider>
-                    <PersonProvider>
-                        <DashboardLayout />
-                    </PersonProvider>
-                </CaseProvider>
-            </ProtectedRoute>
+                <ProtectedRoute>
+                    <CaseProvider>
+                        <PersonProvider>
+                            <DocumentProvider>
+                                <DashboardLayout />
+                            </DocumentProvider>
+                        </PersonProvider>
+                    </CaseProvider>
+                </ProtectedRoute>
                 }
             >
                 {/* Dashboard */}

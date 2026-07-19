@@ -6,96 +6,113 @@
 // Plataforma:
 // TERCERA LETRA
 // ============================================================
+// ============================================================
+// IMPORTACIONES
+// ============================================================
 import {
     FaFolderOpen,
     FaUsers,
     FaFileAlt,
-    FaBell
+    FaBell,
+    FaPlayCircle,
+    FaCheckCircle,
+    FaExclamationTriangle
 } from "react-icons/fa";
-import Placeholder from "react-bootstrap/Placeholder";
 import KPICard from "./KPICard";
-import { useDashboardContext } from "../../contexts/DashboardContext";
 import "../../styles/dashboard/kpi-cards.css";
-const KPICards = () => {
+// ============================================================
+// COMPONENTE
+// ============================================================
+const KPICards = ({
+    kpis = {},
+    caseStatistics = {}
+}) => {
     //----------------------------------------------------------
-    // Información del Dashboard.
+    // Valores principales.
     //----------------------------------------------------------
     const {
-        kpis,
-        loading
-    } = useDashboardContext();
+        cases = 0,
+        people = 0,
+        documents = 0,
+        alerts = 0
+    } = kpis;
     //----------------------------------------------------------
-    // Configuración.
+    // Estadísticas de casos.
+    //----------------------------------------------------------
+    const {
+        activeCases = 0,
+        closedCases = 0,
+        highPriorityCases = 0
+    } = caseStatistics;
+    //----------------------------------------------------------
+    // Configuración de tarjetas.
     //----------------------------------------------------------
     const cards = [
         {
             title: "Casos",
-            value: kpis.cases,
+            value: cases,
             icon: <FaFolderOpen />,
             color: "primary",
             route: "/casos"
         },
         {
             title: "Personas",
-            value: kpis.people,
+            value: people,
             icon: <FaUsers />,
             color: "success",
             route: "/personas"
         },
         {
             title: "Documentos",
-            value: kpis.documents,
+            value: documents,
             icon: <FaFileAlt />,
             color: "warning",
             route: "/documentos"
         },
         {
             title: "Alertas",
-            value: kpis.alerts,
+            value: alerts,
             icon: <FaBell />,
             color: "danger",
             route: "/alertas"
+        },
+        {
+            title: "Casos activos",
+            value: activeCases,
+            icon: <FaPlayCircle />,
+            color: "info",
+            route: "/casos"
+        },
+        {
+            title: "Casos cerrados",
+            value: closedCases,
+            icon: <FaCheckCircle />,
+            color: "success",
+            route: "/casos"
+        },
+        {
+            title: "Prioridad alta",
+            value: highPriorityCases,
+            icon: <FaExclamationTriangle />,
+            color: "danger",
+            route: "/casos"
         }
     ];
     //----------------------------------------------------------
-    // Loading.
-    //----------------------------------------------------------
-    if (loading) {
-        return (
-            <section className="kpi-grid">
-                {
-                    Array.from({ length: 4 }).map((_, index) => (
-                        <div
-                            key={index}
-                            className="card shadow-sm p-4"
-                        >
-                            <Placeholder animation="glow">
-                                <Placeholder xs={8} />
-                            </Placeholder>
-                            <Placeholder animation="glow">
-                                <Placeholder xs={4} />
-                            </Placeholder>
-                        </div>
-                    ))
-                }
-            </section>
-        );
-    }
-    //----------------------------------------------------------
-    // Vista normal.
+    // Vista.
     //----------------------------------------------------------
     return (
         <section className="kpi-grid">
-            {
-                cards.map((card) => (
-                    <KPICard
-                        key={card.title}
-                        {...card}
-                    />
-                ))
-            }
+            {cards.map(card => (
+                <KPICard
+                    key={card.title}
+                    {...card}
+                />
+            ))}
         </section>
     );
 };
+// ============================================================
+// EXPORTACIÓN
+// ============================================================
 export default KPICards;
-

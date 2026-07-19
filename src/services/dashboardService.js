@@ -125,3 +125,138 @@ export const getRecentActivity = async () => {
         return [];
     }
 };
+// ============================================================
+// ESTADÍSTICAS GENERALES DE CASOS
+// ============================================================
+export const getCaseStatistics = async () => {
+    try {
+        const snapshot = await getDocs(
+            collection(db, "casos")
+        );
+
+        const cases = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }));
+
+        const normalizeValue = value =>
+            String(value ?? "")
+                .trim()
+                .toLowerCase();
+
+        const closedStatuses = [
+            "cerrado",
+            "cerrada",
+            "finalizado",
+            "finalizada",
+            "completado",
+            "completada"
+        ];
+
+        const casesByStatus = {};
+        const casesByPriority = {};
+        const casesByType = {};
+
+        let activeCases = 0;
+        let closedCases = 0;
+        let highPriorityCases = 0;
+
+        cases.forEach(item => {
+            //----------------------------------------------
+            // Estado.
+            //----------------------------------------------
+            const status =
+                item.estado?.trim() ||
+                "Sin estado";
+
+            casesByStatus[status] =
+                (casesByStatus[status] || 0) + 1;
+
+            //----------------------------------------------
+            // Prioridad.
+            //----------------------------------------------
+            const priority =
+                item.prioridad?.trim() ||
+                "Sin prioridad";
+
+            casesByPriority[priority] =
+                (casesByPriority[priority] || 0) + 1;
+
+            //----------------------------------------------
+            // Tipo.
+            //----------------------------------------------
+            const type =
+                item.tipo?.trim() ||
+                "Sin tipo";
+
+            casesByType[type] =
+                (casesByType[type] || 0) + 1;
+
+            //----------------------------------------------
+            // Activos y cerrados.
+            //----------------------------------------------
+            const normalizedStatus =
+                normalizeValue(item.estado);
+
+            if (
+                closedStatuses.includes(
+                    normalizedStatus
+                )
+            ) {
+                closedCases += 1;
+            }
+            else {
+                activeCases += 1;
+            }
+
+            //----------------------------------------------
+            // Alta prioridad.
+            //----------------------------------------------
+            if (
+                normalizeValue(item.prioridad) ===
+                "alta"
+            ) {
+                highPriorityCases += 1;
+            }
+        });
+
+        return {
+            activeCases,
+            closedCases,
+            highPriorityCases,
+
+            casesByStatus: Object.entries(
+                casesByStatus
+            ).map(([name, value]) => ({
+                name,
+                value
+            })),
+
+            casesByPriority: Object.entries(
+                casesByPriority
+            ).map(([name, value]) => ({
+                name,
+                value
+            })),
+
+            casesByType: Object.entries(
+                casesByType
+            ).map(([name, value]) => ({
+                name,
+                value
+            }))
+        };
+    }
+    catch (error) {
+        console.error(error);
+
+        return {
+            activeCases: 0,
+            closedCases: 0,
+            highPriorityCases: 0,
+            casesByStatus: [],
+            casesByPriority: [],
+            casesByType: []
+        };
+    }
+};

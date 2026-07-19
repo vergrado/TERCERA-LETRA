@@ -1,13 +1,22 @@
-const CasesHeader = () => {
+// ============================================================
+// DocumentsHeader.jsx
+// ------------------------------------------------------------
+// Encabezado del módulo de Documentos.
+//
+// Plataforma:
+// TERCERA LETRA
+// ============================================================
+const DocumentsHeader = () => {
     return (
         <div className="mb-4">
             <h1 className="fw-bold">
-                Casos
+                Documentos
             </h1>
+
             <p className="text-muted">
-                Administración y seguimiento de los casos registrados.
+                Administración, organización y seguimiento de la documentación asociada a personas y casos.
             </p>
         </div>
     );
 };
-export default CasesHeader;
+export default DocumentsHeader;
