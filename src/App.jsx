@@ -40,6 +40,8 @@ import PersonaDetail from "./pages/personas/PersonaDetail";
 import PersonaEdit from "./pages/personas/PersonaEdit";
 
 import Documentos from "./pages/Documentos";
+import NuevoDocumento from "./pages/documentos/NuevoDocumento";
+import EditarDocumento from "./pages/documentos/EditarDocumento";
 import Alertas from "./pages/Alertas";
 import Reportes from "./pages/Reportes";
 import Administracion from "./pages/Administracion";
@@ -126,19 +128,28 @@ function App() {
                 element={<NuevaPersona />}
             />
 
-            <Route
-                path="/personas/:id"
-                element={<PersonaDetail />}
-            />
+                <Route
+                    path="/personas/:id"
+                    element={<PersonaDetail />}
+                />
 
-            <Route
-                path="/personas/:id/editar"
-                element={<PersonaEdit />}
-            />
+                <Route
+                    path="/personas/:id/editar"
+                    element={<PersonaEdit />}
+                />
                 {/* Documentos */}
                 <Route
                     path="/documentos"
                     element={<Documentos />}
+                />
+
+                <Route
+                    path="/documentos/nuevo"
+                    element={<NuevoDocumento />}
+                />
+                <Route
+                    path="/documentos/:id/editar"
+                    element={<EditarDocumento />}
                 />
                 {/* Alertas */}
                 <Route
