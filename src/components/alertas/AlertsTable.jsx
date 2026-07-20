@@ -43,6 +43,22 @@ const AlertsTable = () => {
         deleting,
         setDeleting
     ] = useState(false);
+        //----------------------------------------------------------
+        // Filtros
+        //----------------------------------------------------------
+        const [search, setSearch] = useState("");
+
+        const [priorityFilter, setPriorityFilter] =
+            useState("");
+
+        const [statusFilter, setStatusFilter] =
+            useState("");
+
+        const [typeFilter, setTypeFilter] =
+            useState("");
+
+        const [sortBy, setSortBy] =
+            useState("fecha");
     //----------------------------------------------------------
     // Solicitar eliminación
     //----------------------------------------------------------
@@ -119,6 +135,53 @@ const AlertsTable = () => {
             return "Sin fecha";
         }
         return parsedDate.toLocaleDateString("es-CL");
+    };
+    //----------------------------------------------------------
+    // Diferencia de días
+    //----------------------------------------------------------
+    const getDueStatus = (dateValue) => {
+        if (!dateValue) {
+            return {
+                text: "Sin fecha",
+                variant: "secondary"
+            };
+        }
+        let dueDate;
+        if (dateValue?.toDate) {
+            dueDate = dateValue.toDate();
+        } else {
+            dueDate = new Date(dateValue);
+        }
+        if (Number.isNaN(dueDate.getTime())) {
+            return {
+                text: "Sin fecha",
+                variant: "secondary"
+            };
+        }
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        dueDate.setHours(0,0,0,0);
+        const diff =
+            Math.round(
+                (dueDate - today) /
+                (1000*60*60*24)
+            );
+        if (diff < 0) {
+            return {
+                text: `Hace ${Math.abs(diff)} día${Math.abs(diff)>1?"s":""}`,
+                variant: "danger"
+            };
+        }
+        if (diff === 0) {
+            return {
+                text: "Hoy",
+                variant: "warning"
+            };
+        }
+        return {
+            text: `En ${diff} día${diff>1?"s":""}`,
+            variant: "success"
+        };
     };
     //----------------------------------------------------------
     // Obtener variante de prioridad
@@ -201,6 +264,71 @@ const AlertsTable = () => {
         }
     };
     //----------------------------------------------------------
+    // Filtrar y ordenar
+    //----------------------------------------------------------
+    const filteredAlerts = [...alerts]
+    .filter(alertItem => {
+        const searchText =
+            `${alertItem.titulo || ""}
+            ${alertItem.descripcion || ""}
+            ${alertItem.personaNombre || ""}
+            ${alertItem.casoTitulo || ""}`
+            .toLowerCase();
+        if (
+            search &&
+            !searchText.includes(
+                search.toLowerCase()
+            )
+        ) {
+            return false;
+        }
+        if (
+            priorityFilter &&
+            alertItem.prioridad !== priorityFilter
+        ) {
+            return false;
+        }
+        if (
+            statusFilter &&
+            alertItem.estado !== statusFilter
+        ) {
+            return false;
+        }
+        if (
+            typeFilter &&
+            alertItem.tipo !== typeFilter
+        ) {
+            return false;
+        }
+        return true;
+    })
+    .sort((a,b)=>{
+        switch(sortBy){
+            case "titulo":
+                return (a.titulo||"")
+                    .localeCompare(
+                        b.titulo||""
+                    );
+            case "prioridad":
+                return (a.prioridad||"")
+                    .localeCompare(
+                        b.prioridad||""
+                    );
+            case "estado":
+                return (a.estado||"")
+                    .localeCompare(
+                        b.estado||""
+                    );
+            default:
+                return new Date(
+                    a.fechaVencimiento
+                ) -
+                new Date(
+                    b.fechaVencimiento
+                );
+        }
+    });
+    //----------------------------------------------------------
     // Cargando
     //----------------------------------------------------------
     if (loading && alerts.length === 0) {
@@ -254,6 +382,129 @@ const AlertsTable = () => {
                     {error}
                 </Alert>
             )}
+                <div className="card shadow-sm border-0 mb-3">
+                    <div className="card-body">
+                        <div className="row g-3">
+                            <div className="col-lg-4">
+                                <input
+                                    className="form-control"
+                                    placeholder="Buscar..."
+                                    value={search}
+                                    onChange={e=>
+                                        setSearch(
+                                            e.target.value
+                                        )
+                                    }
+                                />
+                            </div>
+                            <div className="col-lg-2">
+                                <select
+                                    className="form-select"
+                                    value={priorityFilter}
+                                    onChange={e=>
+                                        setPriorityFilter(
+                                            e.target.value
+                                        )
+                                    }
+                                >
+                                    <option value="">
+                                        Prioridad
+                                    </option>
+                                    <option>
+                                        Alta
+                                    </option>
+                                    <option>
+                                        Media
+                                    </option>
+                                    <option>
+                                        Baja
+                                    </option>
+                                </select>
+                            </div>
+                            <div className="col-lg-2">
+                                <select
+                                    className="form-select"
+                                    value={statusFilter}
+                                    onChange={e=>
+                                        setStatusFilter(
+                                            e.target.value
+                                        )
+                                    }
+                                >
+                                    <option value="">
+                                        Estado
+                                    </option>
+                                    <option>
+                                        Pendiente
+                                    </option>
+                                    <option>
+                                        En proceso
+                                    </option>
+                                    <option>
+                                        Completada
+                                    </option>
+                                    <option>
+                                        Vencida
+                                    </option>
+                                </select>
+                            </div>
+                            <div className="col-lg-2">
+                                <select
+                                    className="form-select"
+                                    value={typeFilter}
+                                    onChange={e=>
+                                        setTypeFilter(
+                                            e.target.value
+                                        )
+                                    }
+                                >
+                                    <option value="">
+                                        Tipo
+                                    </option>
+                                    <option>
+                                        Vencimiento
+                                    </option>
+                                    <option>
+                                        Seguimiento
+                                    </option>
+                                    <option>
+                                        Documento
+                                    </option>
+                                    <option>
+                                        Recordatorio
+                                    </option>
+                                    <option>
+                                        Notificación
+                                    </option>
+                                </select>
+                            </div>
+                            <div className="col-lg-2">
+                                <select
+                                    className="form-select"
+                                    value={sortBy}
+                                    onChange={e=>
+                                        setSortBy(
+                                            e.target.value
+                                        )
+                                    }
+                                >
+                                    <option value="fecha">
+                                        Fecha
+                                    </option>
+                                    <option value="titulo">
+                                        Título
+                                    </option>
+                                    <option value="prioridad">
+                                        Prioridad
+                                    </option>
+                                    <option value="estado">
+                                        Estado
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             <div className="card shadow-sm border-0">
                 <div className="card-body p-0">
                     <div className="table-responsive">
@@ -269,14 +520,15 @@ const AlertsTable = () => {
                                     <th>Estado</th>
                                     <th>Persona</th>
                                     <th>Caso</th>
-                                    <th>Fecha de vencimiento</th>
+                                    <th>Vencimiento</th>
                                     <th className="text-center">
                                         Acciones
                                     </th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {alerts.map((alertItem) => (
+                                {filteredAlerts.map((alertItem) => (
+                                    
                                     <tr key={alertItem.id}>
                                         <td>
                                             <div className="fw-semibold">
@@ -351,10 +603,26 @@ const AlertsTable = () => {
                                                 </span>
                                             )}
                                         </td>
-                                        <td>
-                                            {formatDate(
+                                   <td>
+                                    <div>
+                                        {formatDate(
+                                            alertItem.fechaVencimiento
+                                        )}
+
+                                    </div>
+                                    <Badge
+                                        bg={
+                                            getDueStatus(
                                                 alertItem.fechaVencimiento
-                                            )}
+                                            ).variant
+                                        }
+                                    >
+                                        {
+                                            getDueStatus(
+                                                alertItem.fechaVencimiento
+                                            ).text
+                                        }
+                                    </Badge>
                                         </td>
                                         <td className="text-center">
                                             <AlertActions
