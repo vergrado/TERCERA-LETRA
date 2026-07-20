@@ -381,7 +381,6 @@ const CasesTable = ({ cases }) => {
                                             >
                                                 {item.personaNombre}
                                             </button>
-
                                             <div>
                                                 <small className="text-muted">
                                                     {item.personaRut}

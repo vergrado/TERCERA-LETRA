@@ -20,7 +20,11 @@ import {
     FaFilePdf,
     FaFileWord,
     FaFileExcel,
-    FaFileImage
+    FaFileImage,
+    FaFolderOpen,
+    FaTags,
+    FaUserCheck,
+    FaUserSlash
 } from "react-icons/fa";
 import { useDocumentContext } from "../../contexts/DocumentContext";
 import { useToast } from "../../contexts/ToastContext";
@@ -372,11 +376,82 @@ const DocumentsTable = () => {
                     {error}
                 </Alert>
             )}
-            <div className="card shadow-sm border-0">
+                {/* Dashboard */}
+                <div className="row g-3 mb-4">
+                    <div className="col-lg-3 col-md-6">
+                        <div className="card border-0 shadow-sm h-100 dashboard-card dashboard-primary">
+                            <div className="card-body d-flex align-items-center">
+                                <div className="dashboard-icon">
+                                    <FaFolderOpen />
+                                </div>
+                                <div className="ms-3">
+                                    <h3 className="mb-0 fw-bold">
+                                        {stats.total}
+                                    </h3>
+                                    <small className="text-muted">
+                                        Documentos
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-6">
+                        <div className="card border-0 shadow-sm h-100 dashboard-card dashboard-success">
+                            <div className="card-body d-flex align-items-center">
+                                <div className="dashboard-icon">
+                                    <FaTags />
+                                </div>
+                                <div className="ms-3">
+                                    <h3 className="mb-0 fw-bold">
+                                        {stats.categorias}
+                                    </h3>
+                                    <small className="text-muted">
+                                        Categorías
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-6">
+                        <div className="card border-0 shadow-sm h-100 dashboard-card dashboard-info">
+                            <div className="card-body d-flex align-items-center">
+                                <div className="dashboard-icon">
+                                    <FaUserCheck />
+                                </div>
+                                <div className="ms-3">
+                                    <h3 className="mb-0 fw-bold">
+                                        {stats.conPersona}
+                                    </h3>
+                                    <small className="text-muted">
+                                        Con persona
+                                    </small>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div className="col-lg-3 col-md-6">
+                        <div className="card border-0 shadow-sm h-100 dashboard-card dashboard-secondary">
+                            <div className="card-body d-flex align-items-center">
+                                <div className="dashboard-icon">
+                                    <FaUserSlash />
+                                </div>
+                                <div className="ms-3">
+                                    <h3 className="mb-0 fw-bold">
+                                        {stats.sinPersona}
+                                    </h3>
+                                    <small className="text-muted">
+                                        Sin persona
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="card shadow-sm border-0">
                 {/* Buscador */}
                 <div className="card-body border-bottom">
                     <div className="d-flex justify-content-between align-items-center mb-3">
-
                         <small className="text-muted">
                             Mostrando <strong>{filteredDocuments.length}</strong> de{" "}
                             <strong>{documents.length}</strong> documentos
