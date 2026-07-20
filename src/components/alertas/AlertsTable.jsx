@@ -47,18 +47,17 @@ const AlertsTable = () => {
         // Filtros
         //----------------------------------------------------------
         const [search, setSearch] = useState("");
-
         const [priorityFilter, setPriorityFilter] =
             useState("");
-
         const [statusFilter, setStatusFilter] =
             useState("");
 
         const [typeFilter, setTypeFilter] =
             useState("");
-
         const [sortBy, setSortBy] =
             useState("fecha");
+        const [sortDirection, setSortDirection] =
+            useState("asc");
     //----------------------------------------------------------
     // Solicitar eliminación
     //----------------------------------------------------------
@@ -264,69 +263,203 @@ const AlertsTable = () => {
         }
     };
     //----------------------------------------------------------
+    // Convertir fecha para ordenar
+    //----------------------------------------------------------
+    const getDateTimestamp = (dateValue) => {
+        if (!dateValue) {
+            return 0;
+        }
+        if (dateValue?.toDate) {
+            return dateValue.toDate().getTime();
+        }
+        if (
+            typeof dateValue === "string" &&
+            /^\d{4}-\d{2}-\d{2}$/.test(dateValue)
+        ) {
+            const [year, month, day] =
+                dateValue.split("-").map(Number);
+            return new Date(
+                year,
+                month - 1,
+                day
+            ).getTime();
+        }
+        const parsedDate =
+            new Date(dateValue);
+        return Number.isNaN(parsedDate.getTime())
+            ? 0
+            : parsedDate.getTime();
+    };
+    //----------------------------------------------------------
+    // Valor numérico de prioridad
+    //----------------------------------------------------------
+    const getPriorityOrder = (priority) => {
+        switch (normalizeText(priority)) {
+            case "alta":
+                return 3;
+            case "media":
+                return 2;
+            case "baja":
+                return 1;
+            default:
+                return 0;
+        }
+    };
+    //----------------------------------------------------------
+    // Valor numérico del estado
+    //----------------------------------------------------------
+    const getStatusOrder = (status) => {
+        switch (normalizeText(status)) {
+            case "vencida":
+            case "vencido":
+                return 4;
+            case "pendiente":
+                return 3;
+            case "en proceso":
+            case "en_proceso":
+            case "en-proceso":
+                return 2;
+            case "completada":
+            case "completado":
+                return 1;
+            default:
+                return 0;
+        }
+    };
+    //----------------------------------------------------------
+    // Limpiar todos los filtros
+    //----------------------------------------------------------
+    const handleClearFilters = () => {
+        setSearch("");
+        setPriorityFilter("");
+        setStatusFilter("");
+        setTypeFilter("");
+        setSortBy("fecha");
+        setSortDirection("asc");
+    };
+    //----------------------------------------------------------
     // Filtrar y ordenar
     //----------------------------------------------------------
-    const filteredAlerts = [...alerts]
-    .filter(alertItem => {
-        const searchText =
-            `${alertItem.titulo || ""}
-            ${alertItem.descripcion || ""}
-            ${alertItem.personaNombre || ""}
-            ${alertItem.casoTitulo || ""}`
-            .toLowerCase();
+    //----------------------------------------------------------
+// Filtrar y ordenar alertas
+//----------------------------------------------------------
+const filteredAlerts = [...alerts]
+    .filter((alertItem) => {
+        const searchableText = normalizeText(
+            [
+                alertItem.titulo,
+                alertItem.descripcion,
+                alertItem.tipo,
+                alertItem.prioridad,
+                alertItem.estado,
+                alertItem.personaNombre,
+                alertItem.personaRut,
+                alertItem.casoTitulo
+            ].join(" ")
+        );
         if (
-            search &&
-            !searchText.includes(
-                search.toLowerCase()
+            search.trim() &&
+            !searchableText.includes(
+                normalizeText(search)
             )
         ) {
             return false;
         }
         if (
             priorityFilter &&
-            alertItem.prioridad !== priorityFilter
+            normalizeText(alertItem.prioridad) !==
+                normalizeText(priorityFilter)
         ) {
             return false;
         }
         if (
             statusFilter &&
-            alertItem.estado !== statusFilter
+            normalizeText(alertItem.estado) !==
+                normalizeText(statusFilter)
         ) {
             return false;
         }
         if (
             typeFilter &&
-            alertItem.tipo !== typeFilter
+            normalizeText(alertItem.tipo) !==
+                normalizeText(typeFilter)
         ) {
             return false;
         }
         return true;
     })
-    .sort((a,b)=>{
-        switch(sortBy){
+    .sort((a, b) => {
+        let comparison = 0;
+        switch (sortBy) {
             case "titulo":
-                return (a.titulo||"")
-                    .localeCompare(
-                        b.titulo||""
-                    );
-            case "prioridad":
-                return (a.prioridad||"")
-                    .localeCompare(
-                        b.prioridad||""
-                    );
-            case "estado":
-                return (a.estado||"")
-                    .localeCompare(
-                        b.estado||""
-                    );
-            default:
-                return new Date(
-                    a.fechaVencimiento
-                ) -
-                new Date(
-                    b.fechaVencimiento
+                comparison = normalizeText(
+                    a.titulo
+                ).localeCompare(
+                    normalizeText(b.titulo),
+                    "es"
                 );
+                break;
+            case "prioridad":
+                comparison =
+                    getPriorityOrder(a.prioridad) -
+                    getPriorityOrder(b.prioridad);
+                break;
+            case "estado":
+                comparison =
+                    getStatusOrder(a.estado) -
+                    getStatusOrder(b.estado);
+                break;
+            case "tipo":
+                comparison = normalizeText(
+                    a.tipo
+                ).localeCompare(
+                    normalizeText(b.tipo),
+                    "es"
+                );
+                break;
+            case "persona":
+                comparison = normalizeText(
+                    a.personaNombre
+                ).localeCompare(
+                    normalizeText(b.personaNombre),
+                    "es"
+                );
+                break;
+            case "caso":
+                comparison = normalizeText(
+                    a.casoTitulo
+                ).localeCompare(
+                    normalizeText(b.casoTitulo),
+                    "es"
+                );
+                break;
+            case "fecha":
+            default:
+                comparison =
+                    getDateTimestamp(
+                        a.fechaVencimiento
+                    ) -
+                    getDateTimestamp(
+                        b.fechaVencimiento
+                    );
+                break;
         }
+        return sortDirection === "asc"
+            ? comparison
+            : comparison * -1;
+    });
+    // ==============================
+    // DEBUG TEMPORAL
+    // ==============================
+    console.log("Alerts:", alerts);
+    console.log("Filtered Alerts:", filteredAlerts);
+    console.log("Filtros:", {
+        search,
+        priorityFilter,
+        statusFilter,
+        typeFilter,
+        sortBy,
+        sortDirection
     });
     //----------------------------------------------------------
     // Cargando
@@ -478,180 +611,259 @@ const AlertsTable = () => {
                                     </option>
                                 </select>
                             </div>
-                            <div className="col-lg-2">
-                                <select
-                                    className="form-select"
-                                    value={sortBy}
-                                    onChange={e=>
-                                        setSortBy(
-                                            e.target.value
-                                        )
-                                    }
-                                >
-                                    <option value="fecha">
-                                        Fecha
-                                    </option>
-                                    <option value="titulo">
-                                        Título
-                                    </option>
-                                    <option value="prioridad">
-                                        Prioridad
-                                    </option>
-                                    <option value="estado">
-                                        Estado
-                                    </option>
-                                </select>
+                            <div className="col-lg-3">
+                                    <div className="input-group">
+                                        <select
+                                            className="form-select"
+                                            value={sortBy}
+                                            onChange={(event) =>
+                                                setSortBy(event.target.value)
+                                            }
+                                            aria-label="Ordenar alertas por"
+                                        >
+                                            <option value="fecha">
+                                                Ordenar por fecha
+                                            </option>
+                                            <option value="titulo">
+                                                Ordenar por título
+                                            </option>
+                                            <option value="prioridad">
+                                                Ordenar por prioridad
+                                            </option>
+                                            <option value="estado">
+                                                Ordenar por estado
+                                            </option>
+                                            <option value="tipo">
+                                                Ordenar por tipo
+                                            </option>
+                                            <option value="persona">
+                                                Ordenar por persona
+                                            </option>
+                                            <option value="caso">
+                                                Ordenar por caso
+                                            </option>
+                                        </select>
+                                        <button
+                                            type="button"
+                                            className="btn btn-outline-secondary"
+                                            onClick={() =>
+                                                setSortDirection(
+                                                    (currentDirection) =>
+                                                        currentDirection === "asc"
+                                                            ? "desc"
+                                                            : "asc"
+                                                )
+                                            }
+                                            title={
+                                                sortDirection === "asc"
+                                                    ? "Orden ascendente"
+                                                    : "Orden descendente"
+                                            }
+                                        >
+                                            {sortDirection === "asc"
+                                                ? "↑"
+                                                : "↓"}
+                                        </button>
+                                    </div>
                             </div>
+                        </div>
+                        <div className="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2 mt-3 pt-3 border-top">
+                            <small className="text-muted">
+                                Mostrando{" "}
+                                <strong>{filteredAlerts.length}</strong>{" "}
+                                de{" "}
+                                <strong>{alerts.length}</strong>{" "}
+                                alerta
+                                {alerts.length === 1 ? "" : "s"}
+                            </small>
+                            <button
+                                type="button"
+                                className="btn btn-sm btn-outline-secondary"
+                                onClick={handleClearFilters}
+                                disabled={
+                                    !search &&
+                                    !priorityFilter &&
+                                    !statusFilter &&
+                                    !typeFilter &&
+                                    sortBy === "fecha" &&
+                                    sortDirection === "asc"
+                                }
+                            >
+                                Limpiar filtros
+                            </button>
                         </div>
                     </div>
                 </div>
-            <div className="card shadow-sm border-0">
-                <div className="card-body p-0">
-                    <div className="table-responsive">
-                        <Table
-                            hover
-                            responsive
-                            className="align-middle mb-0"
-                        >
-                            <thead className="table-light">
-                                <tr>
-                                    <th>Alerta</th>
-                                    <th>Prioridad</th>
-                                    <th>Estado</th>
-                                    <th>Persona</th>
-                                    <th>Caso</th>
-                                    <th>Vencimiento</th>
-                                    <th className="text-center">
-                                        Acciones
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredAlerts.map((alertItem) => (
-                                    
-                                    <tr key={alertItem.id}>
-                                        <td>
-                                            <div className="fw-semibold">
-                                                {alertItem.titulo ||
-                                                    "Sin título"}
-                                            </div>
-                                            {alertItem.descripcion && (
-                                                <small className="text-muted d-block">
-                                                    {alertItem.descripcion}
-                                                </small>
-                                            )}
-                                        </td>
-                                        <td>
-                                            <Badge
-                                                bg={getPriorityVariant(
-                                                    alertItem.prioridad
-                                                )}
-                                                text={
-                                                    normalizeText(
-                                                        alertItem.prioridad
-                                                    ) === "media"
-                                                        ? "dark"
-                                                        : undefined
-                                                }
-                                                pill
-                                            >
-                                                {getPriorityLabel(
-                                                    alertItem.prioridad
-                                                )}
-                                            </Badge>
-                                        </td>
-                                        <td>
-                                            <Badge
-                                                bg={getStatusVariant(
-                                                    alertItem.estado
-                                                )}
-                                                text={
-                                                    normalizeText(
-                                                        alertItem.estado
-                                                    ) === "pendiente"
-                                                        ? "dark"
-                                                        : undefined
-                                                }
-                                                pill
-                                            >
-                                                {getStatusLabel(
-                                                    alertItem.estado
-                                                )}
-                                            </Badge>
-                                        </td>
-                                        <td>
-                                            {alertItem.personaId ? (
-                                                <span>
-                                                    {alertItem.personaNombre ||
-                                                        "Persona asociada"}
-                                                </span>
-                                            ) : (
-                                                <span className="text-muted">
-                                                    Sin persona
-                                                </span>
-                                            )}
-                                        </td>
-                                        <td>
-                                            {alertItem.casoId ? (
-                                                <span>
-                                                    {alertItem.casoTitulo ||
-                                                        "Caso asociado"}
-                                                </span>
-                                            ) : (
-                                                <span className="text-muted">
-                                                    Sin caso
-                                                </span>
-                                            )}
-                                        </td>
-                                   <td>
-                                    <div>
-                                        {formatDate(
-                                            alertItem.fechaVencimiento
-                                        )}
-
-                                    </div>
-                                    <Badge
-                                        bg={
-                                            getDueStatus(
-                                                alertItem.fechaVencimiento
-                                            ).variant
-                                        }
-                                    >
-                                        {
-                                            getDueStatus(
-                                                alertItem.fechaVencimiento
-                                            ).text
-                                        }
-                                    </Badge>
-                                        </td>
-                                        <td className="text-center">
-                                            <AlertActions
-                                                alertItem={alertItem}
-                                                onDelete={
-                                                    handleDeleteRequest
-                                                }
-                                            />
-                                        </td>
+                <div className="card shadow-sm border-0">
+                    <div className="card-body p-0">
+                        <div className="table-responsive">
+                            <Table
+                                hover
+                                responsive
+                                className="align-middle mb-0"
+                            >
+                                <thead className="table-light">
+                                    <tr>
+                                        <th>Alerta</th>
+                                        <th>Prioridad</th>
+                                        <th>Estado</th>
+                                        <th>Persona</th>
+                                        <th>Caso</th>
+                                        <th>Vencimiento</th>
+                                        <th className="text-center">
+                                            Acciones
+                                        </th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
+                                </thead>
+                                <tbody>
+                                    {filteredAlerts.length === 0 ? (
+                                        <tr>
+                                            <td
+                                                colSpan={7}
+                                                className="text-center py-5"
+                                            >
+                                                <div className="fw-semibold mb-1">
+                                                    No se encontraron alertas
+                                                </div>
+                                                <p className="text-muted small mb-3">
+                                                    No existen registros que coincidan con
+                                                    los filtros seleccionados.
+                                                </p>
+                                                <button
+                                                    type="button"
+                                                    className="btn btn-sm btn-outline-primary"
+                                                    onClick={handleClearFilters}
+                                                >
+                                                    Limpiar filtros
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        filteredAlerts.map((alertItem) => {
+                                            const dueStatus = getDueStatus(
+                                                alertItem.fechaVencimiento
+                                            );
+                                            return (
+                                                <tr key={alertItem.id}>
+                                                    <td>
+                                                        <div className="fw-semibold">
+                                                            {alertItem.titulo || "Sin título"}
+                                                        </div>
+
+                                                        {alertItem.descripcion && (
+                                                            <small className="text-muted d-block">
+                                                                {alertItem.descripcion}
+                                                            </small>
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        <Badge
+                                                            bg={getPriorityVariant(
+                                                                alertItem.prioridad
+                                                            )}
+                                                            text={
+                                                                normalizeText(
+                                                                    alertItem.prioridad
+                                                                ) === "media"
+                                                                    ? "dark"
+                                                                    : undefined
+                                                            }
+                                                            pill
+                                                        >
+                                                            {getPriorityLabel(
+                                                                alertItem.prioridad
+                                                            )}
+                                                        </Badge>
+                                                    </td>
+                                                    <td>
+                                                        <Badge
+                                                            bg={getStatusVariant(
+                                                                alertItem.estado
+                                                            )}
+                                                            text={
+                                                                normalizeText(
+                                                                    alertItem.estado
+                                                                ) === "pendiente"
+                                                                    ? "dark"
+                                                                    : undefined
+                                                            }
+                                                            pill
+                                                        >
+                                                            {getStatusLabel(
+                                                                alertItem.estado
+                                                            )}
+                                                        </Badge>
+                                                    </td>
+                                                    <td>
+                                                        {alertItem.personaId ? (
+                                                            <span>
+                                                                {alertItem.personaNombre ||
+                                                                    "Persona asociada"}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-muted">
+                                                                Sin persona
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        {alertItem.casoId ? (
+                                                            <span>
+                                                                {alertItem.casoTitulo ||
+                                                                    "Caso asociado"}
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-muted">
+                                                                Sin caso
+                                                            </span>
+                                                        )}
+                                                    </td>
+                                                    <td>
+                                                        <div className="mb-1">
+                                                            {formatDate(
+                                                                alertItem.fechaVencimiento
+                                                            )}
+                                                        </div>
+                                                        <Badge
+                                                            bg={dueStatus.variant}
+                                                            text={
+                                                                dueStatus.variant === "warning"
+                                                                    ? "dark"
+                                                                    : undefined
+                                                            }
+                                                            pill
+                                                        >
+                                                            {dueStatus.text}
+                                                        </Badge>
+                                                    </td>
+                                                    <td className="text-center">
+                                                        <AlertActions
+                                                            alertItem={alertItem}
+                                                            onDelete={handleDeleteRequest}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    )}
+                                </tbody>
+                            </Table>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <ConfirmDeleteModal
-                show={Boolean(alertToDelete)}
-                onCancel={handleDeleteCancel}
-                onConfirm={handleDeleteConfirm}
-                loading={deleting}
-                title="Eliminar alerta"
-                message={
-                    alertToDelete
-                        ? `¿Estás seguro de eliminar la alerta "${alertToDelete.titulo || "Sin título"}"?`
-                        : ""
-                }
-            />
-        </>
-    );
-};
+                                <ConfirmDeleteModal
+                                    show={Boolean(alertToDelete)}
+                                    onCancel={handleDeleteCancel}
+                                    onConfirm={handleDeleteConfirm}
+                                    loading={deleting}
+                                    title="Eliminar alerta"
+                                    message={
+                                        alertToDelete
+                                            ? `¿Estás seguro de eliminar la alerta "${alertToDelete.titulo || "Sin título"}"?`
+                                            : ""
+                                    }
+                                />
+                            </>
+                        );
+                    };
 export default AlertsTable;
