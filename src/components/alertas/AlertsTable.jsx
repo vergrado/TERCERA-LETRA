@@ -200,6 +200,21 @@ const AlertsTable = () => {
         }
     };
     //----------------------------------------------------------
+    // Color de fila según prioridad
+    //----------------------------------------------------------
+    const getRowClass = (priority) => {
+        switch (normalizeText(priority)) {
+            case "alta":
+                return "table-danger";
+            case "media":
+                return "table-warning";
+            case "baja":
+                return "table-success";
+            default:
+                return "";
+        }
+    };
+    //----------------------------------------------------------
     // Obtener texto de prioridad
     //----------------------------------------------------------
     const getPriorityLabel = (priority) => {
@@ -451,16 +466,16 @@ const filteredAlerts = [...alerts]
     // ==============================
     // DEBUG TEMPORAL
     // ==============================
-    console.log("Alerts:", alerts);
-    console.log("Filtered Alerts:", filteredAlerts);
-    console.log("Filtros:", {
-        search,
-        priorityFilter,
-        statusFilter,
-        typeFilter,
-        sortBy,
-        sortDirection
-    });
+    //console.log("Alerts:", alerts);
+    //console.log("Filtered Alerts:", filteredAlerts);
+    //console.log("Filtros:", {
+       // search,
+       // priorityFilter,
+        //statusFilter,
+       // typeFilter,
+       // sortBy,
+        //sortDirection
+   /// });
     //----------------------------------------------------------
     // Cargando
     //----------------------------------------------------------
@@ -744,7 +759,10 @@ const filteredAlerts = [...alerts]
                                                 alertItem.fechaVencimiento
                                             );
                                             return (
-                                                <tr key={alertItem.id}>
+                                                <tr
+                                                        key={alertItem.id}
+                                                        className={getRowClass(alertItem.prioridad)}
+                                                    >
                                                     <td>
                                                         <div className="fw-semibold">
                                                             {alertItem.titulo || "Sin título"}

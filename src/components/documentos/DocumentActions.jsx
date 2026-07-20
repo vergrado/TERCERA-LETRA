@@ -22,6 +22,9 @@ const DocumentActions = ({
     // ---------------------------------------------------------
     // Ver documento
     // ---------------------------------------------------------
+    // ---------------------------------------------------------
+    // Ver documento
+    // ---------------------------------------------------------
     const handleView = () => {
         if (document.url) {
             window.open(
@@ -29,11 +32,11 @@ const DocumentActions = ({
                 "_blank",
                 "noopener,noreferrer"
             );
-
             return;
         }
-        // Más adelante esta ruta mostrará el detalle.
-        navigate(`/documentos/${document.id}`);
+        alert(
+            "Este documento no tiene un archivo asociado."
+        );
     };
     // ---------------------------------------------------------
     // Render
@@ -46,7 +49,7 @@ const DocumentActions = ({
                 title={
                     document.url
                         ? "Abrir archivo"
-                        : "Ver documento"
+                        : "Sin archivo asociado"
                 }
                 onClick={handleView}
             >
