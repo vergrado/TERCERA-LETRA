@@ -42,9 +42,13 @@ import PersonaEdit from "./pages/personas/PersonaEdit";
 import Documentos from "./pages/Documentos";
 import NuevoDocumento from "./pages/documentos/NuevoDocumento";
 import EditarDocumento from "./pages/documentos/EditarDocumento";
-import Alertas from "./pages/Alertas";
+//import Alertas from "./pages/Alertas";
+import Alertas from "./pages/alertas/Alertas";
+import NuevaAlerta from "./pages/alertas/NuevaAlerta";
+import EditarAlerta from "./pages/alertas/EditarAlerta";
 import Reportes from "./pages/Reportes";
 import Administracion from "./pages/Administracion";
+
 // ============================================================
 // Layout y Seguridad
 // ============================================================
@@ -54,6 +58,7 @@ import { CaseProvider } from "./contexts/CaseContext";
 import { ToastProvider } from "./contexts/ToastContext";
 import { PersonProvider } from "./contexts/PersonContext";
 import { DocumentProvider } from "./contexts/DocumentContext";
+import { AlertProvider } from "./contexts/AlertContext";
 // ============================================================
 // COMPONENTE PRINCIPAL
 // ============================================================
@@ -88,7 +93,9 @@ function App() {
                     <CaseProvider>
                         <PersonProvider>
                             <DocumentProvider>
-                                <DashboardLayout />
+                                <AlertProvider>
+                                    <DashboardLayout />
+                                </AlertProvider>
                             </DocumentProvider>
                         </PersonProvider>
                     </CaseProvider>
@@ -156,8 +163,15 @@ function App() {
                     path="/alertas"
                     element={<Alertas />}
                 />
+                <Route
+                    path="/alertas/nueva"
+                    element={<NuevaAlerta />}
+                />
+                <Route
+                    path="/alertas/:id/editar"
+                    element={<EditarAlerta />}
+                />
                 {/* Reportes */}
-
                 <Route
                     path="/reportes"
                     element={<Reportes />}
