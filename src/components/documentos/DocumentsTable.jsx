@@ -11,6 +11,7 @@ import {
     Alert,
     Badge,
     Form,
+    Pagination,
     Spinner,
     Table
 } from "react-bootstrap";
@@ -48,6 +49,8 @@ const DocumentsTable = () => {
     const [search, setSearch] = useState("");
     const [sortField, setSortField] = useState("fecha");
     const [sortDirection, setSortDirection] = useState("desc");
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
     // ---------------------------------------------------------
     // Solicitar eliminación
     // ---------------------------------------------------------
@@ -261,6 +264,7 @@ const DocumentsTable = () => {
         return result;
         }, [documents, search, sortField, sortDirection]);
         const handleSort = (field) => {
+             setCurrentPage(1);
             if (sortField === field) {
                 setSortDirection(
                     sortDirection === "asc"
@@ -272,6 +276,47 @@ const DocumentsTable = () => {
                 setSortDirection("asc");
             }
         };
+        //----------------------------------------------------------
+        // Paginación
+        //----------------------------------------------------------
+        const totalPages = Math.max(
+            1,
+            Math.ceil(filteredDocuments.length / itemsPerPage)
+        );
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const paginatedDocuments = filteredDocuments.slice(
+            startIndex,
+            endIndex
+        );
+        const visibleStart =
+            filteredDocuments.length === 0
+                ? 0
+                : startIndex + 1;
+
+        const visibleEnd = Math.min(
+            endIndex,
+            filteredDocuments.length
+        );
+        //----------------------------------------------------------
+        // Estadísticas
+        //----------------------------------------------------------
+        const stats = useMemo(() => {
+            return {
+                total: documents.length,
+                categorias: new Set(
+                    documents
+                        .map(doc => doc.categoria)
+                        .filter(Boolean)
+                ).size,
+                conPersona: documents.filter(
+                    doc => doc.personaId
+                ).length,
+                sinPersona: documents.filter(
+                    doc => !doc.personaId
+                ).length
+            };
+        }, [documents]);
     // ---------------------------------------------------------
     // Cargando
     // ---------------------------------------------------------
@@ -336,13 +381,15 @@ const DocumentsTable = () => {
                             Mostrando <strong>{filteredDocuments.length}</strong> de{" "}
                             <strong>{documents.length}</strong> documentos
                         </small>
-
                     </div>
                     <Form.Control
                         type="text"
                         placeholder="Buscar por título, categoría, persona, caso o archivo..."
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={(e) => {
+                            setSearch(e.target.value);
+                            setCurrentPage(1);
+                        }}
                     />
                 </div>
                 <div className="card-body p-0">
@@ -406,7 +453,7 @@ const DocumentsTable = () => {
                                             </td>
                                         </tr>
                                     ) : (
-                                        filteredDocuments.map((document) => {
+                                        paginatedDocuments.map((document) => {
                                             const fileSize = formatFileSize(
                                                 document.tamano
                                             );
@@ -493,7 +540,75 @@ const DocumentsTable = () => {
                                         })
                                     )}
                                 </tbody>
-                        </Table>
+                            </Table>
+                            <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 px-3 py-3 border-top">
+                                <div className="d-flex flex-column flex-sm-row align-items-sm-center gap-2">
+                                    <small className="text-muted">
+                                        Mostrando{" "}
+                                        <strong>{visibleStart}</strong>
+                                        {" - "}
+                                        <strong>{visibleEnd}</strong>
+                                        {" de "}
+                                        <strong>{filteredDocuments.length}</strong>
+                                        {" documentos"}
+                                    </small>
+
+                                    <Form.Select
+                                        size="sm"
+                                        value={itemsPerPage}
+                                        onChange={(e) => {
+                                            setItemsPerPage(Number(e.target.value));
+                                            setCurrentPage(1);
+                                        }}
+                                        style={{ width: "auto" }}
+                                        aria-label="Documentos por página"
+                                    >
+                                        <option value={5}>5 por página</option>
+                                        <option value={10}>10 por página</option>
+                                        <option value={20}>20 por página</option>
+                                        <option value={50}>50 por página</option>
+                                    </Form.Select>
+
+                                </div>
+                                <Pagination className="mb-0">
+                                    <Pagination.Prev
+                                        onClick={() =>
+                                            setCurrentPage((page) =>
+                                                Math.max(1, page - 1)
+                                            )
+                                        }
+                                        disabled={currentPage === 1}
+                                    >
+                                        Anterior
+                                    </Pagination.Prev>
+
+                                    {Array.from(
+                                        { length: totalPages },
+                                        (_, index) => index + 1
+                                    ).map((page) => (
+                                        <Pagination.Item
+                                            key={page}
+                                            active={page === currentPage}
+                                            onClick={() => setCurrentPage(page)}
+                                        >
+                                            {page}
+                                        </Pagination.Item>
+                                    ))}
+                                    <Pagination.Next
+                                        onClick={() =>
+                                            setCurrentPage((page) =>
+                                                Math.min(totalPages, page + 1)
+                                            )
+                                        }
+                                        disabled={
+                                            currentPage === totalPages ||
+                                            filteredDocuments.length === 0
+                                        }
+                                    >
+                                        Siguiente
+                                    </Pagination.Next>
+                                </Pagination>
+                            </div>
                     </div>
                 </div>
             </div>
