@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 37.88 37.88">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-1" y="0" width="37.88" height="37.88"/>
+    </clipPath>
+  </defs>
+  <g id="Capa_1-2" data-name="Capa 1">
+    <g id="uuid-84cb7ae4-2fda-4a78-8ce7-d954db9a27de" data-name="Capa 1-2">
+      <g id="Grupo_578" data-name="Grupo 578">
+        <path id="Trazado_8316" data-name="Trazado 8316" class="cls-2" d="M11.95,11.11l11.21,15.65h2.77l-11.21-15.65h-2.77Z"/>
+        <g id="Grupo_577" data-name="Grupo 577">
+          <g class="cls-3">
+            <g id="Grupo_576" data-name="Grupo 576">
+              <path id="Trazado_8317" data-name="Trazado 8317" class="cls-2" d="M18.93,0h0C8.48,0,0,8.48,0,18.93s8.48,18.93,18.93,18.93h0c10.46,0,18.93-8.48,18.93-18.93S29.4,0,18.93,0h0M22.06,28.88l-4.9-6.86-6.41,6.85h-2.91l8.05-8.61L7.84,9h7.96l4.6,6.43,6.01-6.43h2.91l-7.66,8.19,8.35,11.67h-7.96Z"/>
+            </g>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

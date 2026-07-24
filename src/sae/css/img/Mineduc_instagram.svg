@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 37.88 37.88">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+      }
+
+      .cls-2 {
+        fill: #fff;
+      }
+
+      .cls-3 {
+        clip-path: url(#clippath);
+      }
+    </style>
+    <clipPath id="clippath">
+      <rect class="cls-1" y="0" width="37.88" height="37.88"/>
+    </clipPath>
+  </defs>
+  <g id="Capa_1-2" data-name="Capa 1">
+    <g id="uuid-9fe071cc-6354-4ade-81bb-eac7d4879750" data-name="Capa 1-2">
+      <g id="Grupo_580" data-name="Grupo 580">
+        <g class="cls-3">
+          <g id="Grupo_579" data-name="Grupo 579">
+            <path id="Trazado_8318" data-name="Trazado 8318" class="cls-2" d="M23.73,10.72h-9.59c-1.89,0-3.43,1.53-3.43,3.43v9.59c0,1.89,1.53,3.43,3.43,3.43h9.59c1.89,0,3.43-1.53,3.43-3.43v-9.59c0-1.89-1.53-3.43-3.43-3.43M18.95,24.08c-2.84,0-5.13-2.31-5.13-5.13s2.31-5.13,5.13-5.13,5.13,2.31,5.13,5.13h0c0,2.84-2.31,5.13-5.13,5.13M24.43,14.48c-.57,0-1.03-.46-1.03-1.03s.46-1.03,1.03-1.03,1.03.46,1.03,1.03-.46,1.03-1.03,1.03"/>
+            <path id="Trazado_8319" data-name="Trazado 8319" class="cls-2" d="M18.95,15.52c-1.89,0-3.43,1.53-3.43,3.43s1.53,3.43,3.43,3.43,3.43-1.53,3.43-3.43h0c0-1.89-1.53-3.42-3.43-3.43"/>
+            <path id="Trazado_8320" data-name="Trazado 8320" class="cls-2" d="M18.93,0h0C8.48,0,0,8.48,0,18.93h0c0,10.46,8.48,18.93,18.93,18.93s18.93-8.48,18.93-18.93h0c.01-10.45-8.47-18.93-18.93-18.93h0M28.88,24.08c0,2.65-2.14,4.8-4.8,4.8h-10.28c-2.65,0-4.8-2.14-4.8-4.8v-10.28c0-2.65,2.14-4.8,4.8-4.8h10.28c2.65,0,4.8,2.14,4.8,4.8v10.28Z"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

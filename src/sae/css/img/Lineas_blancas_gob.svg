@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 537.14 13.45">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke: url(#Degradado_sin_nombre_62);
+      }
+
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke-miterlimit: 10;
+        stroke-width: 3px;
+      }
+
+      .cls-2 {
+        stroke: url(#Degradado_sin_nombre_62-2);
+      }
+    </style>
+    <linearGradient id="Degradado_sin_nombre_62" data-name="Degradado sin nombre 62" x1="0" y1="11.95" x2="537.14" y2="11.95" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset=".08" stop-color="#fff" stop-opacity=".96"/>
+      <stop offset=".22" stop-color="#fff" stop-opacity=".86"/>
+      <stop offset=".4" stop-color="#fff" stop-opacity=".7"/>
+      <stop offset=".62" stop-color="#fff" stop-opacity=".47"/>
+      <stop offset=".85" stop-color="#fff" stop-opacity=".19"/>
+      <stop offset=".99" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="Degradado_sin_nombre_62-2" data-name="Degradado sin nombre 62" y1="1.5" y2="1.5" xlink:href="#Degradado_sin_nombre_62"/>
+  </defs>
+  <g id="Capa_1-2" data-name="Capa 1">
+    <g>
+      <line class="cls-1" y1="11.95" x2="537.14" y2="11.95"/>
+      <line class="cls-2" y1="1.5" x2="537.14" y2="1.5"/>
+    </g>
+  </g>
+</svg>
